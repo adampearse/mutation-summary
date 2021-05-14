@@ -7,7 +7,7 @@ This page outlines the changes made with each Mutation Summary release.
 
 
 ## 0.2.0 (May 14, 2021)
-[0.2.0 Release Milestone](https://github.com/mmacfadden/mutation-summary/milestones?state=closed)
+[0.2.0 Release Milestone](https://github.com/mmacfadden/mutation-summary/milestone/1?closed=1)
 
 ### Enhancements
 * **Improved Build System ([#2](https://github.com/mmacfadden/mutation-summary/issues/2))**: The package.json was updated to add scripts and dependencies for scripted builds.
