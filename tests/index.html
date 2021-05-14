@@ -21,18 +21,17 @@ limitations under the License.
 <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
 <script src="../node_modules/chai/chai.js"></script>
 <script src="../node_modules/mocha/mocha.js"></script>
-<script src="../src/mutation-summary.js"></script>
+<script src="../dist/mutation-summary.js"></script>
 <script src="../util/tree-mirror.js"></script>
 </head>
 <body>
 <script>
 
 mocha.setup({
-  ui: 'tdd',
-  ignoreLeaks: true
+  ui: 'tdd'
 });
 
-var assert = chai.assert;
+const assert = chai.assert;
 
 </script>
 <script src="setup.js"></script>

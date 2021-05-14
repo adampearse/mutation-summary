@@ -1,4 +1,4 @@
-///<reference path='third_party/DefinitelyTyped/chai/chai-assert.d.ts'/>
+ ///<reference path='third_party/DefinitelyTyped/chai/chai-assert.d.ts'/>
 ///<reference path='../src/mutation-summary.ts'/>
 ///<reference path='../util/tree-mirror.ts'/>
 function compareNodeArrayIgnoreOrder(expected, actual) {

@@ -1,16 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "target": "es6",
+    "module": "none",
     "declaration": true,
     "outDir": "dist",
     "strict": false,
     "baseUrl": "./src",
-    "typeRoots": [ "typings" ],
     "esModuleInterop": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "lib": ["dom", "es6"]
   },
   "include": [
-    "src/**/*.ts",
-    "typings/*.ts"
+    "src/**/*.ts"
   ]
 }

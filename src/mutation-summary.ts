@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+declare var WebKitMutationObserver: MutationObserver;
+
 var MutationObserverCtor;
 if (typeof WebKitMutationObserver !== 'undefined')
   MutationObserverCtor = WebKitMutationObserver;
@@ -825,7 +827,7 @@ class MutationProjection {
   }
 }
 
-export class Summary {
+ class Summary {
   public added:Node[];
   public removed:Node[];
   public reparented:Node[];
@@ -1444,7 +1446,7 @@ function elementFilterAttributes(selectors:Selector[]):string[] {
   return Object.keys(attributes);
 }
 
-export interface Query {
+ interface Query {
   element?:string;
   attribute?:string;
   all?:boolean;
@@ -1454,7 +1456,7 @@ export interface Query {
   elementFilter?:Selector[];
 }
 
-export interface Options {
+ interface Options {
   callback:(summaries:Summary[]) => any;
   queries: Query[];
   rootNode?:Node;
@@ -1462,7 +1464,7 @@ export interface Options {
   observeOwnChanges?:boolean;
 }
 
-export class MutationSummary {
+ class MutationSummary {
 
   public static NodeMap = NodeMap; // exposed for use in TreeMirror.
   public static parseElementFilter = Selector.parseSelectors; // exposed for testing.
