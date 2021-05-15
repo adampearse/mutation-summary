@@ -2,257 +2,172 @@ import {Selector} from "./Selector";
 import {IQuery} from "./IQuery";
 import {IMutationSummaryOptions} from "./IMutationSummaryOptions";
 import {Summary} from "./Summary";
-import {IStringMap} from "./IStringMap";
 import {MutationProjection} from "./MutationProjection";
 import {IQueryValidator} from "./IQueryValidator";
+import {MutationSummaryOptionProcessor} from "./MutationSummaryOptionProcessor";
 
-const attributeFilterPattern = /^([a-zA-Z:_]+[a-zA-Z0-9_\-:.]*)$/;
-
-function validateAttribute(attribute: string) {
-  if (typeof attribute != 'string')
-    throw Error('Invalid request option. attribute must be a non-zero length string.');
-
-  attribute = attribute.trim();
-
-  if (!attribute)
-    throw Error('Invalid request option. attribute must be a non-zero length string.');
-
-
-  if (!attribute.match(attributeFilterPattern))
-    throw Error('Invalid request option. invalid attribute name: ' + attribute);
-
-  return attribute;
-}
-
-function validateElementAttributes(attribs: string): string[] {
-  if (!attribs.trim().length)
-    throw Error('Invalid request option: elementAttributes must contain at least one attribute.');
-
-  const lowerAttributes = {};
-  const attributes = {};
-
-  const tokens = attribs.split(/\s+/);
-  for (let i = 0; i < tokens.length; i++) {
-    let name = tokens[i];
-    if (!name)
-      continue;
-
-    name = validateAttribute(name);
-    const nameLower = name.toLowerCase();
-    if (lowerAttributes[nameLower])
-      throw Error('Invalid request option: observing multiple case variations of the same attribute is not supported.');
-
-    attributes[name] = true;
-    lowerAttributes[nameLower] = true;
-  }
-
-  return Object.keys(attributes);
-}
-
-function elementFilterAttributes(selectors: Selector[]): string[] {
-  const attributes: IStringMap<boolean> = {};
-
-  selectors.forEach((selector) => {
-    selector.qualifiers.forEach((qualifier) => {
-      attributes[qualifier.attrName] = true;
-    });
-  });
-
-  return Object.keys(attributes);
-}
-
+/**
+ * This is the main entry point class for the Mutation Summary library. When
+ * created, a MutationSummary takes care of the details of observing the DOM
+ * for changes, computing the "net-effect" of what's changed and then delivers
+ * these changes to the provided callback.
+ *
+ * @example
+ * ```
+ * const ms = new MutationSummary({
+ *   callback(summaries => {
+ *     summaries.forEach(summary => console.log(summary)),
+ *     queries: [
+ *       { all: true }
+ *     ]
+ *   })
+ * })
+ * ```
+ */
 export class MutationSummary {
 
+  // TODO move this to a configuration option.
   public static createQueryValidator: (root: Node, query: IQuery) => IQueryValidator;
 
-  private connected: boolean;
-  private options: IMutationSummaryOptions;
-  private observer: MutationObserver;
-  private readonly observerOptions: MutationObserverInit;
-  private readonly root: Node;
-  private readonly callback: (summaries: Summary[]) => any;
-  private readonly elementFilter: Selector[];
-  private readonly calcReordered: boolean;
-  private queryValidators: IQueryValidator[];
+  private _connected: boolean;
+  private _options: IMutationSummaryOptions;
+  private _observer: MutationObserver;
+  private readonly _observerOptions: MutationObserverInit;
+  private readonly _root: Node;
+  private readonly _callback: (summaries: Summary[]) => any;
+  private readonly _elementFilter: Selector[];
+  private readonly _calcReordered: boolean;
+  private _queryValidators: IQueryValidator[];
 
-  private static optionKeys: IStringMap<boolean> = {
-    'callback': true, // required
-    'queries': true,  // required
-    'rootNode': true,
-    'oldPreviousSibling': true,
-    'observeOwnChanges': true
-  };
+  /**
+   * Creates a new MutationSummary class using the specified options.
+   *
+   * @param opts The options that configure how the MutationSummary
+   *             instance will observe and report changes.
+   */
+  constructor(opts: IMutationSummaryOptions) {
+    this._connected = false;
+    this._options = MutationSummaryOptionProcessor.validateOptions(opts);
+    this._observerOptions = MutationSummaryOptionProcessor.createObserverOptions(this._options.queries);
+    this._root = this._options.rootNode;
+    this._callback = this._options.callback;
 
-  private static createObserverOptions(queries: IQuery[]): MutationObserverInit {
-    const observerOptions: MutationObserverInit = {
-      childList: true,
-      subtree: true
-    };
+    this._elementFilter = Array.prototype.concat.apply([], this._options.queries.map((query) => {
+      return query.elementFilter ? query.elementFilter : [];
+    }));
+    if (!this._elementFilter.length)
+      this._elementFilter = undefined;
 
-    let attributeFilter: IStringMap<boolean>;
+    this._calcReordered = this._options.queries.some((query) => {
+      return query.all;
+    });
 
-    function observeAttributes(attributes?: string[]) {
-      if (observerOptions.attributes && !attributeFilter)
-        return; // already observing all.
-
-      observerOptions.attributes = true;
-      observerOptions.attributeOldValue = true;
-
-      if (!attributes) {
-        // observe all.
-        attributeFilter = undefined;
-        return;
-      }
-
-      // add to observed.
-      attributeFilter = attributeFilter || {};
-      attributes.forEach((attribute) => {
-        attributeFilter[attribute] = true;
-        attributeFilter[attribute.toLowerCase()] = true;
+    this._queryValidators = []; // TODO(rafaelw): Shouldn't always define this.
+    if (MutationSummary.createQueryValidator) {
+      this._queryValidators = this._options.queries.map((query) => {
+        return MutationSummary.createQueryValidator(this._root, query);
       });
     }
 
-    queries.forEach((query) => {
-      if (query.characterData) {
-        observerOptions.characterData = true;
-        observerOptions.characterDataOldValue = true;
-        return;
-      }
-
-      if (query.all) {
-        observeAttributes();
-        observerOptions.characterData = true;
-        observerOptions.characterDataOldValue = true;
-        return;
-      }
-
-      if (query.attribute) {
-        observeAttributes([query.attribute.trim()]);
-        return;
-      }
-
-      const attributes = elementFilterAttributes(query.elementFilter).concat(query.attributeList || []);
-      if (attributes.length)
-        observeAttributes(attributes);
+    this._observer = new MutationObserver((mutations: MutationRecord[]) => {
+      this._observerCallback(mutations);
     });
 
-    if (attributeFilter)
-      observerOptions.attributeFilter = Object.keys(attributeFilter);
-
-    return observerOptions;
+    this.reconnect();
   }
 
-  private static validateOptions(options: IMutationSummaryOptions): IMutationSummaryOptions {
-    for (let prop in options) {
-      if (!(prop in MutationSummary.optionKeys))
-        throw Error('Invalid option: ' + prop);
-    }
+  /**
+   * Starts observation using an existing `MutationSummary` which has been
+   * disconnected. Note that this function is just a convenience method for
+   * creating a new `MutationSummary` with the same options. The next time
+   * changes are reported, they will relative to the state of the observed
+   * DOM at the point that `reconnect` was called.
+   */
+  public reconnect(): void {
+    if (this._connected)
+      throw Error('Already connected');
 
-    if (typeof options.callback !== 'function')
-      throw Error('Invalid options: callback is required and must be a function');
-
-    if (!options.queries || !options.queries.length)
-      throw Error('Invalid options: queries must contain at least one query request object.');
-
-    const opts: IMutationSummaryOptions = {
-      callback: options.callback,
-      rootNode: options.rootNode || document,
-      observeOwnChanges: !!options.observeOwnChanges,
-      oldPreviousSibling: !!options.oldPreviousSibling,
-      queries: []
-    };
-
-    for (let i = 0; i < options.queries.length; i++) {
-      const request = options.queries[i];
-
-      // all
-      if (request.all) {
-        if (Object.keys(request).length > 1)
-          throw Error('Invalid request option. all has no options.');
-
-        opts.queries.push({all: true});
-        continue;
-      }
-
-      // attribute
-      if ('attribute' in request) {
-        const query: IQuery = {
-          attribute: validateAttribute(request.attribute)
-        };
-
-        query.elementFilter = Selector.parseSelectors('*[' + query.attribute + ']');
-
-        if (Object.keys(request).length > 1)
-          throw Error('Invalid request option. attribute has no options.');
-
-        opts.queries.push(query);
-        continue;
-      }
-
-      // element
-      if ('element' in request) {
-        let requestOptionCount = Object.keys(request).length;
-        const query: IQuery = {
-          element: request.element,
-          elementFilter: Selector.parseSelectors(request.element)
-        };
-
-        if (request.hasOwnProperty('elementAttributes')) {
-          query.attributeList = validateElementAttributes(request.elementAttributes);
-          requestOptionCount--;
-        }
-
-        if (requestOptionCount > 1)
-          throw Error('Invalid request option. element only allows elementAttributes option.');
-
-        opts.queries.push(query);
-        continue;
-      }
-
-      // characterData
-      if (request.characterData) {
-        if (Object.keys(request).length > 1)
-          throw Error('Invalid request option. characterData has no options.');
-
-        opts.queries.push({characterData: true});
-        continue;
-      }
-
-      throw Error('Invalid request option. Unknown query request.');
-    }
-
-    return opts;
+    this._observer.observe(this._root, this._observerOptions);
+    this._connected = true;
+    this._checkpointQueryValidators();
   }
 
-  private createSummaries(mutations: MutationRecord[]): Summary[] {
+  /**
+   * Immediately calculates changes and returns them as an array of summaries.
+   * If there are no changes to report, returns undefined.
+   */
+  public takeSummaries(): Summary[] | undefined {
+    if (!this._connected)
+      throw Error('Not connected');
+
+    const summaries = this._createSummaries(this._observer.takeRecords());
+    return this._changesToReport(summaries) ? summaries : undefined;
+  }
+
+  /**
+   * Discontinues observation immediately. If DOM changes are pending delivery,
+   * they will be fetched and reported as the same array of summaries which
+   * are handed into the callback. If there is nothing to report,
+   * this function returns undefined.
+   *
+   * @returns A list of changes that have not yet been delivered to a callback.
+   */
+  public disconnect(): Summary[] | undefined {
+    const summaries = this.takeSummaries();
+    this._observer.disconnect();
+    this._connected = false;
+    return summaries;
+  }
+
+  private _observerCallback(mutations: MutationRecord[]): void {
+    if (!this._options.observeOwnChanges)
+      this._observer.disconnect();
+
+    const summaries = this._createSummaries(mutations);
+    this._runQueryValidators(summaries);
+
+    if (this._options.observeOwnChanges)
+      this._checkpointQueryValidators();
+
+    if (this._changesToReport(summaries))
+      this._callback(summaries);
+
+    // disconnect() may have been called during the callback.
+    if (!this._options.observeOwnChanges && this._connected) {
+      this._checkpointQueryValidators();
+      this._observer.observe(this._root, this._observerOptions);
+    }
+  }
+
+  private _createSummaries(mutations: MutationRecord[]): Summary[] {
     if (!mutations || !mutations.length)
       return [];
 
-    const projection = new MutationProjection(this.root, mutations, this.elementFilter, this.calcReordered, this.options.oldPreviousSibling);
+    const projection = new MutationProjection(this._root, mutations, this._elementFilter, this._calcReordered, this._options.oldPreviousSibling);
 
     const summaries: Summary[] = [];
-    for (let i = 0; i < this.options.queries.length; i++) {
-      summaries.push(new Summary(projection, this.options.queries[i]));
+    for (let i = 0; i < this._options.queries.length; i++) {
+      summaries.push(new Summary(projection, this._options.queries[i]));
     }
 
     return summaries;
   }
 
-  private checkpointQueryValidators() {
-    this.queryValidators.forEach((validator) => {
+  private _checkpointQueryValidators() {
+    this._queryValidators.forEach((validator) => {
       if (validator)
         validator.recordPreviousState();
     });
   }
 
-  private runQueryValidators(summaries: Summary[]) {
-    this.queryValidators.forEach((validator: IQueryValidator, index) => {
+  private _runQueryValidators(summaries: Summary[]) {
+    this._queryValidators.forEach((validator: IQueryValidator, index) => {
       if (validator)
         validator.validate(summaries[index]);
     });
   }
 
-  private changesToReport(summaries: Summary[]): boolean {
+  private _changesToReport(summaries: Summary[]): boolean {
     return summaries.some((summary) => {
       const summaryProps = ['added', 'removed', 'reordered', 'reparented',
         'valueChanged', 'characterDataChanged'];
@@ -271,80 +186,5 @@ export class MutationSummary {
       }
       return false;
     });
-  }
-
-  constructor(opts: IMutationSummaryOptions) {
-    this.connected = false;
-    this.options = MutationSummary.validateOptions(opts);
-    this.observerOptions = MutationSummary.createObserverOptions(this.options.queries);
-    this.root = this.options.rootNode;
-    this.callback = this.options.callback;
-
-    this.elementFilter = Array.prototype.concat.apply([], this.options.queries.map((query) => {
-      return query.elementFilter ? query.elementFilter : [];
-    }));
-    if (!this.elementFilter.length)
-      this.elementFilter = undefined;
-
-    this.calcReordered = this.options.queries.some((query) => {
-      return query.all;
-    });
-
-    this.queryValidators = []; // TODO(rafaelw): Shouldn't always define this.
-    if (MutationSummary.createQueryValidator) {
-      this.queryValidators = this.options.queries.map((query) => {
-        return MutationSummary.createQueryValidator(this.root, query);
-      });
-    }
-
-    this.observer = new MutationObserver((mutations: MutationRecord[]) => {
-      this.observerCallback(mutations);
-    });
-
-    this.reconnect();
-  }
-
-  private observerCallback(mutations: MutationRecord[]) {
-    if (!this.options.observeOwnChanges)
-      this.observer.disconnect();
-
-    const summaries = this.createSummaries(mutations);
-    this.runQueryValidators(summaries);
-
-    if (this.options.observeOwnChanges)
-      this.checkpointQueryValidators();
-
-    if (this.changesToReport(summaries))
-      this.callback(summaries);
-
-    // disconnect() may have been called during the callback.
-    if (!this.options.observeOwnChanges && this.connected) {
-      this.checkpointQueryValidators();
-      this.observer.observe(this.root, this.observerOptions);
-    }
-  }
-
-  reconnect() {
-    if (this.connected)
-      throw Error('Already connected');
-
-    this.observer.observe(this.root, this.observerOptions);
-    this.connected = true;
-    this.checkpointQueryValidators();
-  }
-
-  takeSummaries(): Summary[] {
-    if (!this.connected)
-      throw Error('Not connected');
-
-    const summaries = this.createSummaries(this.observer.takeRecords());
-    return this.changesToReport(summaries) ? summaries : undefined;
-  }
-
-  disconnect(): Summary[] {
-    const summaries = this.takeSummaries();
-    this.observer.disconnect();
-    this.connected = false;
-    return summaries;
   }
 }

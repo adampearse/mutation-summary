@@ -6,9 +6,3 @@ export enum Movement {
   REORDERED,
   EXITED
 }
-
-export namespace Movement {
-  export function enteredOrExited(changeType: Movement): boolean {
-    return changeType === Movement.ENTERED || changeType === Movement.EXITED;
-  }
-}

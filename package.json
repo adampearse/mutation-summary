@@ -32,6 +32,7 @@
     "build:commonjs": "tsc --module commonjs --outDir dist/lib",
     "build:types": "tsc --declaration true --emitDeclarationOnly true --outDir dist/types && node ./scripts/enhance-types.js",
     "build:umd": "rollup -c rollup.config.js",
+    "build:api": "typedoc",
     "dist": "npm run build:esm && npm run build:commonjs && npm run build:umd && npm run build:types",
     "clean": "rimraf dist",
     "prepack": "npm run dist"
@@ -65,6 +66,7 @@
     "rollup-plugin-terser": "7.0.2",
     "ts-node": "9.1.1",
     "tslib": "^2.2.0",
+    "typedoc": "^0.20.36",
     "typescript": "^4.2.4"
   }
 }

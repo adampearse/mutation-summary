@@ -2,13 +2,44 @@ import {IStringMap} from "./IStringMap";
 import {MutationProjection} from "./MutationProjection";
 import {IQuery} from "./IQuery";
 
+/**
+ * Represents a set of changes made to the DOM.
+ */
 export class Summary {
+
+  /**
+   * All elements presently in the subtree and having the given attribute, but
+   * that were not in the subtree, lacked the given attribute, or both.
+   */
   public added: Node[];
+
+  /**
+   * All elements previously in the subtree and having the given attribute, but
+   * that now are not in the subtree, lack the given attribute or both
+   */
   public removed: Node[];
+
+  /**
+   * All nodes that were moved from one parent to another.
+   */
   public reparented: Node[];
+
+  /**
+   * All nodes that are still in the subtree and still have their same
+   * parent, but that have been reordered within the child list of their
+   * parent.
+   */
   public reordered: Node[];
+
+  /**
+   * All elements previously and presently in the subtree and previously and
+   * presently having the given attribute, for whom the value of the given
+   * attribute change.
+   */
   public valueChanged: Node[];
+
   public attributeChanged: IStringMap<Element[]>;
+
   public characterDataChanged: Node[];
 
   constructor(private projection: MutationProjection, query: IQuery) {
@@ -49,12 +80,28 @@ export class Summary {
       this.getOldPreviousSibling = projection.getOldPreviousSibling.bind(projection);
   }
 
+  /**
+   * Will retrieve the previous parentNode for and node. The node must be
+   * contained in the removed element array, otherwise the function throws an
+   * error.
+   *
+   * @param node The node to get the previous parent for.
+   */
   getOldParentNode(node: Node): Node {
     return this.projection.getOldParentNode(node);
   }
 
-  getOldAttribute(node: Node, name: string): string {
-    return this.projection.getOldAttribute(node, name);
+  /**
+   * Retrieves the previous value of an attribute for an element. The Element
+   * must be contained in the valueChanged element array, otherwise the
+   * function throws an error.
+   *
+   * @param element The element to ge the old value for.
+   * @param name The name off the attribute on the element to get the old value
+   * for.
+   */
+  getOldAttribute(element: Element, name: string): string {
+    return this.projection.getOldAttribute(element, name);
   }
 
   getOldCharacterData(node: Node): string {

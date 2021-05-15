@@ -9,6 +9,12 @@ It's built on top of (and requires) a new browser API called [DOM Mutation Obser
 
 <a href='http://www.youtube.com/watch?feature=player_embedded&v=eRZ4pO0gVWw' target='_blank'><img src='http://img.youtube.com/vi/eRZ4pO0gVWw/0.jpg' width='425' height=344 /></a>
 
+# Upgrading from 0.x to 1.x #
+
+If you have been using a 0.x version of Mutation Summary and are upgrading to a 1.x version. There are breaking changes in the API. Most notable, the API has been converted to a module based packaging.
+
+Please see the [Upgrade Guide](docs/Upgrading.md)
+
 # Why do I need it? #
 
 Mutation Summary does five main things for you:
