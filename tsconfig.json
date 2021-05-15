@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "none",
-    "declaration": true,
+    "module": "ESNext",
+    "declaration": false,
     "outDir": "dist",
     "strict": false,
     "baseUrl": "./src",

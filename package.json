@@ -1,31 +1,56 @@
 {
   "name": "mutation-summary",
-  "version": "0.2.0",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
   "description": "Makes observing the DOM fast and easy",
-  "main": "dist/mutation-summary.js",
-  "types": "dist/mutation-summary.d.ts",
-  "directories": {
-    "example": "examples",
-    "test": "tests"
-  },
+  "keywords": [
+    "MutationObserver",
+    "DOM"
+  ],
+  "homepage": "https://github.com/mmacfadden/mutation-summary",
+  "contributors": [
+    {
+      "name": "Rafael Weinstein",
+      "url": "https://github.com/rafaelw"
+    },
+    {
+      "name": "Michael MacFadden",
+      "url": "https://github.com/mmacfadden"
+    }
+  ],
+  "main": "dist/lib/index.js",
+  "module": "dist/module/index.js",
+  "browser": "dist/umd/mutation-summary.js",
+  "types": "dist/types/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc",
+    "build:esm": "tsc --outDir dist/module",
+    "build:commonjs": "tsc --module commonjs --outDir dist/lib",
+    "build:types": "tsc --declaration true --emitDeclarationOnly true --outDir dist/types",
+    "build:umd": "rollup -c rollup.config.js",
+    "dist": "npm run build:esm && npm run build:commonjs && npm run build:umd && npm run build:types",
     "clean": "rimraf dist",
-    "prepublish": "npm run build"
+    "prepack": "npm run dist"
   },
   "repository": {
     "type": "git",
-    "url": "https://code.google.com/p/mutation-summary/"
+    "url": "https://github.com/mmacfadden/mutation-summary.git"
   },
-  "author": "",
-  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/mmacfadden/mutation-summary/issues"
+  },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "19.0.0",
+    "@rollup/plugin-node-resolve": "13.0.0",
+    "@rollup/plugin-typescript": "8.2.1",
     "chai": "^4.3.4",
     "mocha": "^8.4.0",
     "rimraf": "^3.0.2",
+    "rollup": "2.47.0",
+    "rollup-plugin-terser": "7.0.2",
+    "tslib": "^2.2.0",
     "typescript": "^4.2.4"
-  },
-  "files": [
-    "dist"
-  ]
+  }
 }

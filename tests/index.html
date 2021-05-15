@@ -21,12 +21,12 @@ limitations under the License.
 <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
 <script src="../node_modules/chai/chai.js"></script>
 <script src="../node_modules/mocha/mocha.js"></script>
-<script src="../dist/mutation-summary.js"></script>
+<script src="../dist/umd/mutation-summary.js"></script>
 <script src="../util/tree-mirror.js"></script>
 </head>
 <body>
 <script>
-
+var MutationSummary = MutationSummary.MutationSummary;
 mocha.setup({
   ui: 'tdd'
 });
