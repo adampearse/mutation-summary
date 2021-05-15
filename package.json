@@ -23,7 +23,8 @@
   "browser": "dist/umd/mutation-summary.js",
   "types": "dist/types/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "docs"
   ],
   "scripts": {
     "build:esm": "tsc --outDir dist/module",
