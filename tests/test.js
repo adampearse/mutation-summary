@@ -3,7 +3,7 @@
 ///<reference path='../util/tree-mirror.ts'/>
 function compareNodeArrayIgnoreOrder(expected, actual) {
     assert.strictEqual(expected.length, actual.length);
-    var map = new NodeMap();
+    var map = new MutationSummary.NodeMap();
     expected.forEach(function (node) {
         map.set(node, true);
     });
@@ -40,7 +40,7 @@ suite('Mutation Summary', function () {
                 options[key] = extraOptions[key];
             });
         }
-        observer = new MutationSummary(options);
+        observer = new MutationSummary.MutationSummary(options);
         observing = true;
     }
     function stopObserving() {
@@ -831,7 +831,7 @@ suite('Mutation Summary', function () {
     test('Ignore Own Changes', function (async) {
         var div;
         var count = 0;
-        var summary1 = new MutationSummary({
+        var summary1 = new MutationSummary.MutationSummary({
             observeOwnChanges: false,
             queries: [{ all: true }],
             callback: function (summaries) {
@@ -853,7 +853,7 @@ suite('Mutation Summary', function () {
                 }
             }
         });
-        var summary2 = new MutationSummary({
+        var summary2 = new MutationSummary.MutationSummary({
             observeOwnChanges: false,
             queries: [{ all: true }],
             callback: function (summaries) {
@@ -880,7 +880,7 @@ suite('Mutation Summary', function () {
     test('Disconnect During Callback', function (async) {
         var div = document.createElement('div');
         var callbackCount = 0;
-        var summary = new MutationSummary({
+        var summary = new MutationSummary.MutationSummary({
             queries: [{ all: true }],
             rootNode: div,
             callback: function (summaries) {

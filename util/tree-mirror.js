@@ -111,7 +111,7 @@ var TreeMirrorClient = (function () {
         this.target = target;
         this.mirror = mirror;
         this.nextId = 1;
-        this.knownNodes = new NodeMap();
+        this.knownNodes = new MutationSummary.NodeMap();
         var rootId = this.serializeNode(target).id;
         var children = [];
         for (var child = target.firstChild; child; child = child.nextSibling)
@@ -121,7 +121,7 @@ var TreeMirrorClient = (function () {
         var queries = [{ all: true }];
         if (testingQueries)
             queries = queries.concat(testingQueries);
-        this.mutationSummary = new MutationSummary({
+        this.mutationSummary = new MutationSummary.MutationSummary({
             rootNode: target,
             callback: function (summaries) {
                 _this.applyChanged(summaries);
@@ -185,12 +185,12 @@ var TreeMirrorClient = (function () {
     TreeMirrorClient.prototype.serializeAddedAndMoved = function (added, reparented, reordered) {
         var _this = this;
         var all = added.concat(reparented).concat(reordered);
-        var parentMap = new NodeMap();
+        var parentMap = new MutationSummary.NodeMap();
         all.forEach(function (node) {
             var parent = node.parentNode;
             var children = parentMap.get(parent);
             if (!children) {
-                children = new NodeMap();
+                children = new MutationSummary.NodeMap();
                 parentMap.set(parent, children);
             }
             children.set(node, true);
@@ -218,7 +218,7 @@ var TreeMirrorClient = (function () {
     };
     TreeMirrorClient.prototype.serializeAttributeChanges = function (attributeChanged) {
         var _this = this;
-        var map = new NodeMap();
+        var map = new MutationSummary.NodeMap();
         Object.keys(attributeChanged).forEach(function (attrName) {
             attributeChanged[attrName].forEach(function (element) {
                 var record = map.get(element);

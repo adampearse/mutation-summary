@@ -22,269 +22,269 @@ function assertSelectorNames(selectors, expectSelectorStrings) {
 suite('Setup', function() {
   test('Selector Parsing', function() {
     assertSelectorNames(
-      Selector.parseSelectors('div'),
+      MutationSummary.Selector.parseSelectors('div'),
       ['div']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors(' div '),
+      MutationSummary.Selector.parseSelectors(' div '),
       ['div']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('div,span'),
+      MutationSummary.Selector.parseSelectors('div,span'),
       ['div', 'span']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors(' div , SPAN '),
+      MutationSummary.Selector.parseSelectors(' div , SPAN '),
       ['div', 'SPAN']
     );
 
     assert.throws(function() {
-      Selector.parseSelectors('div span');
+      MutationSummary.Selector.parseSelectors('div span');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('div > span');
+      MutationSummary.Selector.parseSelectors('div > span');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('div>span');
+      MutationSummary.Selector.parseSelectors('div>span');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('div < span');
+      MutationSummary.Selector.parseSelectors('div < span');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('div<span');
+      MutationSummary.Selector.parseSelectors('div<span');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('div:first-child')
+      MutationSummary.Selector.parseSelectors('div:first-child')
     });
 
     assertSelectorNames(
-      Selector.parseSelectors('#id'),
+      MutationSummary.Selector.parseSelectors('#id'),
       ['*#id']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('span#id'),
+      MutationSummary.Selector.parseSelectors('span#id'),
       ['span#id']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('SPAN#id1#id2'),
+      MutationSummary.Selector.parseSelectors('SPAN#id1#id2'),
       ['SPAN#id1#id2']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('span, #id'),
+      MutationSummary.Selector.parseSelectors('span, #id'),
       ['span', '*#id']
     );
 
     assert.throws(function() {
-      Selector.parseSelectors('#2foo');
+      MutationSummary.Selector.parseSelectors('#2foo');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('# div');
+      MutationSummary.Selector.parseSelectors('# div');
     });
 
     assertSelectorNames(
-      Selector.parseSelectors('.className'),
+      MutationSummary.Selector.parseSelectors('.className'),
       ['*.className']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('.className.className2'),
+      MutationSummary.Selector.parseSelectors('.className.className2'),
       ['*.className.className2']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('div.className'),
+      MutationSummary.Selector.parseSelectors('div.className'),
       ['div.className']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('DIV.className.className2'),
+      MutationSummary.Selector.parseSelectors('DIV.className.className2'),
       ['DIV.className.className2']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors(' div.className '),
+      MutationSummary.Selector.parseSelectors(' div.className '),
       ['div.className']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('.className'),
+      MutationSummary.Selector.parseSelectors('.className'),
       ['*.className']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors(' .className '),
+      MutationSummary.Selector.parseSelectors(' .className '),
       ['*.className']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('.className,.className,span.className'),
+      MutationSummary.Selector.parseSelectors('.className,.className,span.className'),
       ['*.className', '*.className', 'span.className']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors(' .className, .className, SPAN.className'),
+      MutationSummary.Selector.parseSelectors(' .className, .className, SPAN.className'),
       ['*.className', '*.className', 'SPAN.className']
     );
 
     assert.throws(function() {
-      Selector.parseSelectors('div. className');
+      MutationSummary.Selector.parseSelectors('div. className');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('div . className');
+      MutationSummary.Selector.parseSelectors('div . className');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('div .className');
+      MutationSummary.Selector.parseSelectors('div .className');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('div .className');
+      MutationSummary.Selector.parseSelectors('div .className');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('.2className');
+      MutationSummary.Selector.parseSelectors('.2className');
     });
 
     assertSelectorNames(
-      Selector.parseSelectors('div[foo].className'),
+      MutationSummary.Selector.parseSelectors('div[foo].className'),
       ['div[foo].className']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('DIV[foo].className#id'),
+      MutationSummary.Selector.parseSelectors('DIV[foo].className#id'),
       ['DIV[foo].className#id']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('div#id.className[foo]'),
+      MutationSummary.Selector.parseSelectors('div#id.className[foo]'),
       ['div#id.className[foo]']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('div[foo]'),
+      MutationSummary.Selector.parseSelectors('div[foo]'),
       ['div[foo]']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('div[ foo ]'),
+      MutationSummary.Selector.parseSelectors('div[ foo ]'),
       ['div[foo]']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors(' div[ foo ] '),
+      MutationSummary.Selector.parseSelectors(' div[ foo ] '),
       ['div[foo]']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('div[foo],span[bar]'),
+      MutationSummary.Selector.parseSelectors('div[foo],span[bar]'),
       ['div[foo]', 'span[bar]']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors(' div[foo] , span[bar] '),
+      MutationSummary.Selector.parseSelectors(' div[foo] , span[bar] '),
       ['div[foo]', 'span[bar]']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('[foo]'),
+      MutationSummary.Selector.parseSelectors('[foo]'),
       ['*[foo]']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('[foo][bar]'),
+      MutationSummary.Selector.parseSelectors('[foo][bar]'),
       ['*[foo][bar]']
     );
 
     assert.throws(function() {
-      Selector.parseSelectors('div [foo]');
+      MutationSummary.Selector.parseSelectors('div [foo]');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('div[foo');
+      MutationSummary.Selector.parseSelectors('div[foo');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('divfoo]');
+      MutationSummary.Selector.parseSelectors('divfoo]');
     });
 
     assertSelectorNames(
-      Selector.parseSelectors('div[foo=bar]'),
+      MutationSummary.Selector.parseSelectors('div[foo=bar]'),
       ['div[foo="bar"]']);
 
     assertSelectorNames(
-      Selector.parseSelectors('div[ foo=" bar baz " ]'),
+      MutationSummary.Selector.parseSelectors('div[ foo=" bar baz " ]'),
       ['div[foo=" bar baz "]']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors(' div[ foo = \' bar baz \'] '),
+      MutationSummary.Selector.parseSelectors(' div[ foo = \' bar baz \'] '),
       ['div[foo=" bar baz "]']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('div[foo=baz],span[bar="bat"]'),
+      MutationSummary.Selector.parseSelectors('div[foo=baz],span[bar="bat"]'),
       ['div[foo="baz"]', 'span[bar="bat"]']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors(' div[foo=boo] , span[bar="baz"] '),
+      MutationSummary.Selector.parseSelectors(' div[foo=boo] , span[bar="baz"] '),
       ['div[foo="boo"]', 'span[bar="baz"]']
     );
 
     assert.throws(function() {
-      Selector.parseSelectors('div[foo="bar ]');
+      MutationSummary.Selector.parseSelectors('div[foo="bar ]');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('div[foo=bar"baz]');
+      MutationSummary.Selector.parseSelectors('div[foo=bar"baz]');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('div[foo=bar baz]');
+      MutationSummary.Selector.parseSelectors('div[foo=bar baz]');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('div[foo|=bar]');
+      MutationSummary.Selector.parseSelectors('div[foo|=bar]');
     });
 
     assertSelectorNames(
-      Selector.parseSelectors('div[foo~=bar]'),
+      MutationSummary.Selector.parseSelectors('div[foo~=bar]'),
       ['div[foo~="bar"]']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('div[foo~="bar  "]'),
+      MutationSummary.Selector.parseSelectors('div[foo~="bar  "]'),
       ['div[foo~="bar  "]']
     );
 
     assert.throws(function() {
-      Selector.parseSelectors('div[foo~=]');
+      MutationSummary.Selector.parseSelectors('div[foo~=]');
     });
 
     assert.throws(function() {
-      Selector.parseSelectors('div[foo~ =bar]');
+      MutationSummary.Selector.parseSelectors('div[foo~ =bar]');
     });
 
     assertSelectorNames(
-      Selector.parseSelectors('div[foo][bar]'),
+      MutationSummary.Selector.parseSelectors('div[foo][bar]'),
       ['div[foo][bar]']
     );
 
     assertSelectorNames(
-      Selector.parseSelectors('div[foo], A, *[bar], div[ baz = "bat"]'),
+      MutationSummary.Selector.parseSelectors('div[foo], A, *[bar], div[ baz = "bat"]'),
       ['div[foo]', 'A', '*[bar]', 'div[baz="bat"]']
     );
   });
@@ -293,7 +293,7 @@ suite('Setup', function() {
   test('Options Validation', function() {
     // Unknown option.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         blarg: true,
         callback: function() {},
         queries: [{ all: true }]
@@ -302,56 +302,56 @@ suite('Setup', function() {
 
     // callback is required.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         queries: [{ all: true }]
       });
     });
 
     // callback must be a function.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: 'foo'
       });
     });
 
     // queries is required.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
       });
     });
 
     // queries must contain at least one query request.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: []
       });
     });
 
     // Valid all request.
-    new MutationSummary({
+    new MutationSummary.MutationSummary({
       callback: function() {},
       queries: [{ all: true }]
     });
 
     // all doesn't allow options.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ all: true, foo: false }]
       });
     });
 
     // Valid attribute request.
-    new MutationSummary({
+    new MutationSummary.MutationSummary({
       callback: function() {},
       queries: [{ attribute: "foo" }]
     });
 
     // attribute doesn't allow options.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ attribute: "foo", bar: false }]
       });
@@ -359,7 +359,7 @@ suite('Setup', function() {
 
     // attribute must be a string.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ attribute: 1 }]
       });
@@ -367,7 +367,7 @@ suite('Setup', function() {
 
     // attribute must be non-zero length.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ attribute: '  ' }]
       });
@@ -375,7 +375,7 @@ suite('Setup', function() {
 
     // attribute must names must be valid.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ attribute: '1foo' }]
       });
@@ -383,32 +383,32 @@ suite('Setup', function() {
 
     // attribute must contain only one attribute.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ attribute: 'foo bar' }]
       });
     });
 
     // Valid element request.
-    new MutationSummary({
+    new MutationSummary.MutationSummary({
       callback: function() {},
       queries: [{ element: 'div' }]
     });
 
     // Valid element request 2.
-    new MutationSummary({
+    new MutationSummary.MutationSummary({
       callback: function() {},
       queries: [{ element: 'div, span[foo]' }]
     });
 
     // Valid element request 3.
-    new MutationSummary({
+    new MutationSummary.MutationSummary({
       callback: function() {},
       queries: [{ element: 'div', elementAttributes: "foo bar" }]
     });
 
     // Valid element request 4.
-    new MutationSummary({
+    new MutationSummary.MutationSummary({
       callback: function() {},
       oldPreviousSibling: true,
       queries: [{ element: 'div, span[foo]' }]
@@ -416,7 +416,7 @@ suite('Setup', function() {
 
     // elementFilter doesn't support descendant selectors.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ element: 'div span[foo]' }]
       });
@@ -424,7 +424,7 @@ suite('Setup', function() {
 
     // elementFilter must contain at least one item
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ element: '' }]
       });
@@ -432,7 +432,7 @@ suite('Setup', function() {
 
     // Invalid element syntanx.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ element: 'div[noTrailingBracket', }]
       });
@@ -440,7 +440,7 @@ suite('Setup', function() {
 
     // Invalid element option
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ element: 'div[foo]', foo: true }]
       });
@@ -448,7 +448,7 @@ suite('Setup', function() {
 
     // elememtAttribute must contain valid attribute names
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ element: 'div[foo]', elementAttributes: 'foo 1bar' }]
       });
@@ -456,21 +456,21 @@ suite('Setup', function() {
 
     // Invalid element option 2.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ element: 'div[foo]', elementAttributes: 'foo', foo: true }]
       });
     });
 
     // Valid characterData request.
-    new MutationSummary({
+    new MutationSummary.MutationSummary({
       callback: function() {},
       queries: [{ characterData: true }]
     });
 
     // Invalid characterData option.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ characterData: true, foo: true }]
       });
@@ -478,7 +478,7 @@ suite('Setup', function() {
 
     // Invalid query request.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{  }]
       });
@@ -486,7 +486,7 @@ suite('Setup', function() {
 
     // Invalid query request.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ foo: true  }]
       });
@@ -494,7 +494,7 @@ suite('Setup', function() {
 
     // Disallow listening to multiple 'cases' of the same attribute.
     assert.throws(function() {
-      new MutationSummary({
+      new MutationSummary.MutationSummary({
         callback: function() {},
         queries: [{ element: 'a', elementAttributes: 'Bar bar' }]
       });

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-MutationSummary.createQueryValidator = function(root, query) {
+MutationSummary.MutationSummary.createQueryValidator = function(root, query) {
   var matchesSelector = 'matchesSelector';
   if ('webkitMatchesSelector' in Element.prototype)
     matchesSelector = 'webkitMatchesSelector';
@@ -26,7 +26,7 @@ MutationSummary.createQueryValidator = function(root, query) {
     }
 
     function allData(node) {
-      var oldPreviousSiblingMap = new NodeMap;
+      var oldPreviousSiblingMap = new MutationSummary.NodeMap();
 
       for (var child = node.firstChild; child; child = child.nextSibling)
         oldPreviousSiblingMap.set(child, child.previousSibling);
@@ -174,7 +174,7 @@ MutationSummary.createQueryValidator = function(root, query) {
 function Validator(root, includeFunc, dataFunc, validateFunc) {
 
   function collectNodeMap(node, includeFunc, dataFunc, map) {
-    map = map || new NodeMap;
+    map = map || new MutationSummary.NodeMap;
     if (includeFunc(node))
       map.set(node, dataFunc(node));
 
@@ -195,7 +195,7 @@ function Validator(root, includeFunc, dataFunc, validateFunc) {
     var old = this.current;
     this.current = collectNodeMap(root, includeFunc, dataFunc);
 
-    var currentCopy = new NodeMap;
+    var currentCopy = new MutationSummary.NodeMap;
     this.current.keys().forEach(function(node) {
       currentCopy.set(node, this.current.get(node));
     }, this);
