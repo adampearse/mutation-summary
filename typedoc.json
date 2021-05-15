@@ -1,7 +1,0 @@
-{
-  "entryPoints": ["src/index.ts"],
-  "out": "dist/api",
-  "excludePrivate": true,
-  "excludeInternal": true,
-  "readme": "docs/APIReadMe.md"
-}
