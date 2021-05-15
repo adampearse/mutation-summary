@@ -2,8 +2,8 @@
 
 | Branch      | Status |
 | ----------- | ----------- |
-| Master      | ![](https://github.com/mmacfadden/mutation-summary/actions/workflows/main.yml/badge.svg?branch=master)       |
-| Develop     | ![](https://github.com/mmacfadden/mutation-summary/actions/workflows/main.yml/badge.svg?branch=develop)        |
+| [master](https://github.com/mmacfadden/mutation-summary/tree/master)      | ![](https://github.com/mmacfadden/mutation-summary/actions/workflows/main.yml/badge.svg?branch=master)       |
+| [develop](https://github.com/mmacfadden/mutation-summary/tree/develop)     | ![](https://github.com/mmacfadden/mutation-summary/actions/workflows/main.yml/badge.svg?branch=develop)        |
 
 Mutation Summary is a JavaScript library that makes observing changes to the DOM fast, easy and safe.
 
