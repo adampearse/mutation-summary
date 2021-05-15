@@ -20,8 +20,8 @@ export class Qualifier {
     if (!this.contains)
       return this.attrValue == oldValue;
 
-    var tokens = oldValue.split(' ');
-    for (var i = 0; i < tokens.length; i++) {
+    const tokens = oldValue.split(' ');
+    for (let i = 0; i < tokens.length; i++) {
       if (this.attrValue === tokens[i])
         return true;
     }

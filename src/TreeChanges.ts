@@ -11,7 +11,7 @@ export class TreeChanges extends NodeMap<NodeChange> {
   private reachableCache: NodeMap<boolean>;
   private wasReachableCache: NodeMap<boolean>;
 
-  private rootNode: Node;
+  private readonly rootNode: Node;
 
   constructor(rootNode: Node, mutations: MutationRecord[]) {
     super();
@@ -23,39 +23,40 @@ export class TreeChanges extends NodeMap<NodeChange> {
     this.anyAttributesChanged = false;
     this.anyCharacterDataChanged = false;
 
-    for (var m = 0; m < mutations.length; m++) {
-      var mutation = mutations[m];
+    for (let m = 0; m < mutations.length; m++) {
+      const mutation = mutations[m];
       switch (mutation.type) {
 
         case 'childList':
           this.anyParentsChanged = true;
-          for (var i = 0; i < mutation.removedNodes.length; i++) {
-            var node = mutation.removedNodes[i];
+          for (let i = 0; i < mutation.removedNodes.length; i++) {
+            const node = mutation.removedNodes[i];
             this.getChange(node).removedFromParent(mutation.target);
           }
-          for (var i = 0; i < mutation.addedNodes.length; i++) {
-            var node = mutation.addedNodes[i];
+          for (let i = 0; i < mutation.addedNodes.length; i++) {
+            const node = mutation.addedNodes[i];
             this.getChange(node).insertedIntoParent();
           }
           break;
 
-        case 'attributes':
+        case 'attributes': {
           this.anyAttributesChanged = true;
-          var change = this.getChange(mutation.target);
+          const change = this.getChange(mutation.target);
           change.attributeMutated(mutation.attributeName, mutation.oldValue);
           break;
-
-        case 'characterData':
+        }
+        case 'characterData': {
           this.anyCharacterDataChanged = true;
-          var change = this.getChange(mutation.target);
+          const change = this.getChange(mutation.target);
           change.characterDataMutated(mutation.oldValue);
           break;
+        }
       }
     }
   }
 
   getChange(node: Node): NodeChange {
-    var change = this.get(node);
+    let change = this.get(node);
     if (!change) {
       change = new NodeChange(node);
       this.set(node, change);
@@ -64,7 +65,7 @@ export class TreeChanges extends NodeMap<NodeChange> {
   }
 
   getOldParent(node: Node): Node {
-    var change = this.get(node);
+    const change = this.get(node);
     return change ? change.getOldParent() : node.parentNode;
   }
 
@@ -75,7 +76,7 @@ export class TreeChanges extends NodeMap<NodeChange> {
       return false;
 
     this.reachableCache = this.reachableCache || new NodeMap<boolean>();
-    var isReachable = this.reachableCache.get(node);
+    let isReachable = this.reachableCache.get(node);
     if (isReachable === undefined) {
       isReachable = this.getIsReachable(node.parentNode);
       this.reachableCache.set(node, isReachable);
@@ -91,7 +92,7 @@ export class TreeChanges extends NodeMap<NodeChange> {
       return false;
 
     this.wasReachableCache = this.wasReachableCache || new NodeMap<boolean>();
-    var wasReachable: boolean = this.wasReachableCache.get(node);
+    let wasReachable: boolean = this.wasReachableCache.get(node);
     if (wasReachable === undefined) {
       wasReachable = this.getWasReachable(this.getOldParent(node));
       this.wasReachableCache.set(node, wasReachable);

@@ -24,6 +24,7 @@ export * from "./ChildListChange";
 export * from "./IMutationSummaryOptions";
 export * from "./INumberMap";
 export * from "./IQuery";
+export * from "./IQueryValidator";
 export * from "./IStringMap";
 export * from "./Movement";
 export * from "./MutationProjection";

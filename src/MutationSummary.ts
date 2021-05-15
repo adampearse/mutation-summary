@@ -4,18 +4,18 @@ import {IMutationSummaryOptions} from "./IMutationSummaryOptions";
 import {Summary} from "./Summary";
 import {IStringMap} from "./IStringMap";
 import {MutationProjection} from "./MutationProjection";
-import {NodeMap} from "./NodeMap";
+import {IQueryValidator} from "./IQueryValidator";
 
-var attributeFilterPattern = /^([a-zA-Z:_]+[a-zA-Z0-9_\-:\.]*)$/;
+const attributeFilterPattern = /^([a-zA-Z:_]+[a-zA-Z0-9_\-:.]*)$/;
 
 function validateAttribute(attribute: string) {
   if (typeof attribute != 'string')
-    throw Error('Invalid request opion. attribute must be a non-zero length string.');
+    throw Error('Invalid request option. attribute must be a non-zero length string.');
 
   attribute = attribute.trim();
 
   if (!attribute)
-    throw Error('Invalid request opion. attribute must be a non-zero length string.');
+    throw Error('Invalid request option. attribute must be a non-zero length string.');
 
 
   if (!attribute.match(attributeFilterPattern))
@@ -28,17 +28,17 @@ function validateElementAttributes(attribs: string): string[] {
   if (!attribs.trim().length)
     throw Error('Invalid request option: elementAttributes must contain at least one attribute.');
 
-  var lowerAttributes = {};
-  var attributes = {};
+  const lowerAttributes = {};
+  const attributes = {};
 
-  var tokens = attribs.split(/\s+/);
-  for (var i = 0; i < tokens.length; i++) {
-    var name = tokens[i];
+  const tokens = attribs.split(/\s+/);
+  for (let i = 0; i < tokens.length; i++) {
+    let name = tokens[i];
     if (!name)
       continue;
 
-    var name = validateAttribute(name);
-    var nameLower = name.toLowerCase();
+    name = validateAttribute(name);
+    const nameLower = name.toLowerCase();
     if (lowerAttributes[nameLower])
       throw Error('Invalid request option: observing multiple case variations of the same attribute is not supported.');
 
@@ -50,7 +50,7 @@ function validateElementAttributes(attribs: string): string[] {
 }
 
 function elementFilterAttributes(selectors: Selector[]): string[] {
-  var attributes: IStringMap<boolean> = {};
+  const attributes: IStringMap<boolean> = {};
 
   selectors.forEach((selector) => {
     selector.qualifiers.forEach((qualifier) => {
@@ -63,17 +63,17 @@ function elementFilterAttributes(selectors: Selector[]): string[] {
 
 export class MutationSummary {
 
-  public static createQueryValidator: (root: Node, query: IQuery) => any;
+  public static createQueryValidator: (root: Node, query: IQuery) => IQueryValidator;
 
   private connected: boolean;
   private options: IMutationSummaryOptions;
   private observer: MutationObserver;
-  private observerOptions: MutationObserverInit;
-  private root: Node;
-  private callback: (summaries: Summary[]) => any;
-  private elementFilter: Selector[];
-  private calcReordered: boolean;
-  private queryValidators: any[];
+  private readonly observerOptions: MutationObserverInit;
+  private readonly root: Node;
+  private readonly callback: (summaries: Summary[]) => any;
+  private readonly elementFilter: Selector[];
+  private readonly calcReordered: boolean;
+  private queryValidators: IQueryValidator[];
 
   private static optionKeys: IStringMap<boolean> = {
     'callback': true, // required
@@ -84,12 +84,12 @@ export class MutationSummary {
   };
 
   private static createObserverOptions(queries: IQuery[]): MutationObserverInit {
-    var observerOptions: MutationObserverInit = {
+    const observerOptions: MutationObserverInit = {
       childList: true,
       subtree: true
     };
 
-    var attributeFilter: IStringMap<boolean>;
+    let attributeFilter: IStringMap<boolean>;
 
     function observeAttributes(attributes?: string[]) {
       if (observerOptions.attributes && !attributeFilter)
@@ -131,7 +131,7 @@ export class MutationSummary {
         return;
       }
 
-      var attributes = elementFilterAttributes(query.elementFilter).concat(query.attributeList || []);
+      const attributes = elementFilterAttributes(query.elementFilter).concat(query.attributeList || []);
       if (attributes.length)
         observeAttributes(attributes);
     });
@@ -143,7 +143,7 @@ export class MutationSummary {
   }
 
   private static validateOptions(options: IMutationSummaryOptions): IMutationSummaryOptions {
-    for (var prop in options) {
+    for (let prop in options) {
       if (!(prop in MutationSummary.optionKeys))
         throw Error('Invalid option: ' + prop);
     }
@@ -154,7 +154,7 @@ export class MutationSummary {
     if (!options.queries || !options.queries.length)
       throw Error('Invalid options: queries must contain at least one query request object.');
 
-    var opts: IMutationSummaryOptions = {
+    const opts: IMutationSummaryOptions = {
       callback: options.callback,
       rootNode: options.rootNode || document,
       observeOwnChanges: !!options.observeOwnChanges,
@@ -162,8 +162,8 @@ export class MutationSummary {
       queries: []
     };
 
-    for (var i = 0; i < options.queries.length; i++) {
-      var request = options.queries[i];
+    for (let i = 0; i < options.queries.length; i++) {
+      const request = options.queries[i];
 
       // all
       if (request.all) {
@@ -176,7 +176,7 @@ export class MutationSummary {
 
       // attribute
       if ('attribute' in request) {
-        var query: IQuery = {
+        const query: IQuery = {
           attribute: validateAttribute(request.attribute)
         };
 
@@ -191,8 +191,8 @@ export class MutationSummary {
 
       // element
       if ('element' in request) {
-        var requestOptionCount = Object.keys(request).length;
-        var query: IQuery = {
+        let requestOptionCount = Object.keys(request).length;
+        const query: IQuery = {
           element: request.element,
           elementFilter: Selector.parseSelectors(request.element)
         };
@@ -228,10 +228,10 @@ export class MutationSummary {
     if (!mutations || !mutations.length)
       return [];
 
-    var projection = new MutationProjection(this.root, mutations, this.elementFilter, this.calcReordered, this.options.oldPreviousSibling);
+    const projection = new MutationProjection(this.root, mutations, this.elementFilter, this.calcReordered, this.options.oldPreviousSibling);
 
-    var summaries: Summary[] = [];
-    for (var i = 0; i < this.options.queries.length; i++) {
+    const summaries: Summary[] = [];
+    for (let i = 0; i < this.options.queries.length; i++) {
       summaries.push(new Summary(projection, this.options.queries[i]));
     }
 
@@ -246,7 +246,7 @@ export class MutationSummary {
   }
 
   private runQueryValidators(summaries: Summary[]) {
-    this.queryValidators.forEach((validator, index) => {
+    this.queryValidators.forEach((validator: IQueryValidator, index) => {
       if (validator)
         validator.validate(summaries[index]);
     });
@@ -254,7 +254,7 @@ export class MutationSummary {
 
   private changesToReport(summaries: Summary[]): boolean {
     return summaries.some((summary) => {
-      var summaryProps = ['added', 'removed', 'reordered', 'reparented',
+      const summaryProps = ['added', 'removed', 'reordered', 'reparented',
         'valueChanged', 'characterDataChanged'];
       if (summaryProps.some(function (prop) {
         return summary[prop] && summary[prop].length;
@@ -262,8 +262,8 @@ export class MutationSummary {
         return true;
 
       if (summary.attributeChanged) {
-        var attrNames = Object.keys(summary.attributeChanged);
-        var attrsChanged = attrNames.some((attrName) => {
+        const attrNames = Object.keys(summary.attributeChanged);
+        const attrsChanged = attrNames.some((attrName) => {
           return !!summary.attributeChanged[attrName].length
         });
         if (attrsChanged)
@@ -308,7 +308,7 @@ export class MutationSummary {
     if (!this.options.observeOwnChanges)
       this.observer.disconnect();
 
-    var summaries = this.createSummaries(mutations);
+    const summaries = this.createSummaries(mutations);
     this.runQueryValidators(summaries);
 
     if (this.options.observeOwnChanges)
@@ -337,12 +337,12 @@ export class MutationSummary {
     if (!this.connected)
       throw Error('Not connected');
 
-    var summaries = this.createSummaries(this.observer.takeRecords());
+    const summaries = this.createSummaries(this.observer.takeRecords());
     return this.changesToReport(summaries) ? summaries : undefined;
   }
 
   disconnect(): Summary[] {
-    var summaries = this.takeSummaries();
+    const summaries = this.takeSummaries();
     this.observer.disconnect();
     this.connected = false;
     return summaries;

@@ -3,13 +3,13 @@ import {Qualifier} from "./Qualifier";
 import {NodeChange} from "./NodeChange";
 import {Movement} from "./Movement";
 
-var validNameInitialChar = /[a-zA-Z_]+/;
-var validNameNonInitialChar = /[a-zA-Z0-9_\-]+/;
+const validNameInitialChar = /[a-zA-Z_]+/;
+const validNameNonInitialChar = /[a-zA-Z0-9_\-]+/;
 
 export class Selector {
   private static nextUid: number = 1;
   private static matchesSelector: string = (function () {
-    var element = document.createElement('div');
+    const element = document.createElement('div');
     if (typeof element['webkitMatchesSelector'] === 'function')
       return 'webkitMatchesSelector';
     if (typeof element['mozMatchesSelector'] === 'function')
@@ -45,15 +45,15 @@ export class Selector {
     if (!change || !change.attributes)
       return isMatching;
 
-    var tagName = change.isCaseInsensitive ? this.caseInsensitiveTagName : this.tagName;
+    const tagName = change.isCaseInsensitive ? this.caseInsensitiveTagName : this.tagName;
     if (tagName !== '*' && tagName !== el.tagName)
       return false;
 
-    var attributeOldValues: string[] = [];
-    var anyChanged = false;
-    for (var i = 0; i < this.qualifiers.length; i++) {
-      var qualifier = this.qualifiers[i];
-      var oldValue = change.getAttributeOldValue(qualifier.attrName);
+    const attributeOldValues: string[] = [];
+    let anyChanged = false;
+    for (let i = 0; i < this.qualifiers.length; i++) {
+      const qualifier = this.qualifiers[i];
+      const oldValue = change.getAttributeOldValue(qualifier.attrName);
       attributeOldValues.push(oldValue);
       anyChanged = anyChanged || (oldValue !== undefined);
     }
@@ -61,9 +61,9 @@ export class Selector {
     if (!anyChanged)
       return isMatching;
 
-    for (var i = 0; i < this.qualifiers.length; i++) {
-      var qualifier = this.qualifiers[i];
-      var oldValue = attributeOldValues[i];
+    for (let i = 0; i < this.qualifiers.length; i++) {
+      const qualifier = this.qualifiers[i];
+      let oldValue = attributeOldValues[i];
       if (oldValue === undefined)
         oldValue = el.getAttribute(qualifier.attrName);
       if (!qualifier.matches(oldValue))
@@ -74,7 +74,7 @@ export class Selector {
   }
 
   public matchabilityChange(el: Element, change: NodeChange): Movement {
-    var isMatching = this.isMatching(el);
+    const isMatching = this.isMatching(el);
     if (isMatching)
       return this.wasMatching(el, change, isMatching) ? Movement.STAYED_IN : Movement.ENTERED;
     else
@@ -82,9 +82,9 @@ export class Selector {
   }
 
   public static parseSelectors(input: string): Selector[] {
-    var selectors: Selector[] = [];
-    var currentSelector: Selector;
-    var currentQualifier: Qualifier;
+    const selectors: Selector[] = [];
+    let currentSelector: Selector;
+    let currentQualifier: Qualifier;
 
     function newSelector() {
       if (currentSelector) {
@@ -105,29 +105,29 @@ export class Selector {
       currentQualifier = new Qualifier();
     }
 
-    var WHITESPACE = /\s/;
-    var valueQuoteChar: string;
-    var SYNTAX_ERROR = 'Invalid or unsupported selector syntax.';
+    const WHITESPACE = /\s/;
+    let valueQuoteChar: string = undefined;
+    const SYNTAX_ERROR = 'Invalid or unsupported selector syntax.';
 
-    var SELECTOR = 1;
-    var TAG_NAME = 2;
-    var QUALIFIER = 3;
-    var QUALIFIER_NAME_FIRST_CHAR = 4;
-    var QUALIFIER_NAME = 5;
-    var ATTR_NAME_FIRST_CHAR = 6;
-    var ATTR_NAME = 7;
-    var EQUIV_OR_ATTR_QUAL_END = 8;
-    var EQUAL = 9;
-    var ATTR_QUAL_END = 10;
-    var VALUE_FIRST_CHAR = 11;
-    var VALUE = 12;
-    var QUOTED_VALUE = 13;
-    var SELECTOR_SEPARATOR = 14;
+    const SELECTOR = 1;
+    const TAG_NAME = 2;
+    const QUALIFIER = 3;
+    const QUALIFIER_NAME_FIRST_CHAR = 4;
+    const QUALIFIER_NAME = 5;
+    const ATTR_NAME_FIRST_CHAR = 6;
+    const ATTR_NAME = 7;
+    const EQUIV_OR_ATTR_QUAL_END = 8;
+    const EQUAL = 9;
+    const ATTR_QUAL_END = 10;
+    const VALUE_FIRST_CHAR = 11;
+    const VALUE = 12;
+    const QUOTED_VALUE = 13;
+    const SELECTOR_SEPARATOR = 14;
 
-    var state = SELECTOR;
-    var i = 0;
+    let state = SELECTOR;
+    let i = 0;
     while (i < input.length) {
-      var c = input[i++];
+      const c = input[i++];
 
       switch (state) {
         case SELECTOR:

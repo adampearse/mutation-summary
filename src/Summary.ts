@@ -20,8 +20,8 @@ export class Summary {
     projection.getChanged(this, query.elementFilter, query.characterData);
 
     if (query.all || query.attribute || query.attributeList) {
-      var filter = query.attribute ? [query.attribute] : query.attributeList;
-      var attributeChanged = projection.attributeChangedNodes(filter);
+      const filter = query.attribute ? [query.attribute] : query.attributeList;
+      let attributeChanged = projection.attributeChangedNodes(filter);
 
       if (query.attribute) {
         this.valueChanged = attributeChanged[query.attribute] || [];
@@ -37,7 +37,7 @@ export class Summary {
     }
 
     if (query.all || query.characterData) {
-      var characterDataChanged = projection.getCharacterDataChanged()
+      const characterDataChanged = projection.getCharacterDataChanged()
 
       if (query.characterData)
         this.valueChanged = characterDataChanged;

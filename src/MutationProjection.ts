@@ -10,8 +10,8 @@ import {Selector} from "./Selector";
 export class MutationProjection {
 
   private treeChanges: TreeChanges;
-  private entered: Node[];
-  private exited: Node[];
+  private readonly entered: Node[];
+  private readonly exited: Node[];
   private stayedIn: NodeMap<Movement>;
   private visited: NodeMap<boolean>;
   private childListChangeMap: NodeMap<ChildListChange>;
@@ -42,8 +42,8 @@ export class MutationProjection {
         !this.treeChanges.anyAttributesChanged)
       return;
 
-    var changedNodes: Node[] = this.treeChanges.keys();
-    for (var i = 0; i < changedNodes.length; i++) {
+    const changedNodes: Node[] = this.treeChanges.keys();
+    for (let i = 0; i < changedNodes.length; i++) {
       this.visitNode(changedNodes[i], undefined);
     }
   }
@@ -54,8 +54,8 @@ export class MutationProjection {
 
     this.visited.set(node, true);
 
-    var change = this.treeChanges.get(node);
-    var reachable = parentReachable;
+    const change = this.treeChanges.get(node);
+    let reachable = parentReachable;
 
     // node inherits its parent's reachability change unless
     // its parentNode was mutated.
@@ -75,7 +75,7 @@ export class MutationProjection {
       this.ensureHasOldPreviousSiblingIfNeeded(node);
 
     } else if (reachable === Movement.STAYED_IN) {
-      var movement = Movement.STAYED_IN;
+      let movement = Movement.STAYED_IN;
 
       if (change && change.childList) {
         if (change.oldParentNode !== node.parentNode) {
@@ -93,7 +93,7 @@ export class MutationProjection {
       return;
 
     // reachable === ENTERED || reachable === EXITED.
-    for (var child = node.firstChild; child; child = child.nextSibling) {
+    for (let child = node.firstChild; child; child = child.nextSibling) {
       this.visitNode(child, reachable);
     }
   }
@@ -104,12 +104,12 @@ export class MutationProjection {
 
     this.processChildlistChanges();
 
-    var parentNode = node.parentNode as Node;
-    var nodeChange = this.treeChanges.get(node);
+    let parentNode = node.parentNode as Node;
+    const nodeChange = this.treeChanges.get(node);
     if (nodeChange && nodeChange.oldParentNode)
       parentNode = nodeChange.oldParentNode;
 
-    var change = this.childListChangeMap.get(parentNode);
+    let change = this.childListChangeMap.get(parentNode);
     if (!change) {
       change = new ChildListChange();
       this.childListChangeMap.set(parentNode, change);
@@ -124,24 +124,24 @@ export class MutationProjection {
     this.selectors = selectors;
     this.characterDataOnly = characterDataOnly;
 
-    for (var i = 0; i < this.entered.length; i++) {
-      var node = this.entered[i];
-      var matchable = this.matchabilityChange(node);
+    for (let i = 0; i < this.entered.length; i++) {
+      const node = this.entered[i];
+      const matchable = this.matchabilityChange(node);
       if (matchable === Movement.ENTERED || matchable === Movement.STAYED_IN)
         summary.added.push(node);
     }
 
-    var stayedInNodes = this.stayedIn.keys();
-    for (var i = 0; i < stayedInNodes.length; i++) {
-      var node = stayedInNodes[i];
-      var matchable = this.matchabilityChange(node);
+    let stayedInNodes = this.stayedIn.keys();
+    for (let i = 0; i < stayedInNodes.length; i++) {
+      const node = stayedInNodes[i];
+      const matchable = this.matchabilityChange(node);
 
       if (matchable === Movement.ENTERED) {
         summary.added.push(node);
       } else if (matchable === Movement.EXITED) {
         summary.removed.push(node);
       } else if (matchable === Movement.STAYED_IN && (summary.reparented || summary.reordered)) {
-        var movement: Movement = this.stayedIn.get(node);
+        const movement: Movement = this.stayedIn.get(node);
         if (summary.reparented && movement === Movement.REPARENTED)
           summary.reparented.push(node);
         else if (summary.reordered && movement === Movement.REORDERED)
@@ -149,20 +149,20 @@ export class MutationProjection {
       }
     }
 
-    for (var i = 0; i < this.exited.length; i++) {
-      var node = this.exited[i];
-      var matchable = this.matchabilityChange(node);
+    for (let i = 0; i < this.exited.length; i++) {
+      const node = this.exited[i];
+      const matchable = this.matchabilityChange(node);
       if (matchable === Movement.EXITED || matchable === Movement.STAYED_IN)
         summary.removed.push(node);
     }
   }
 
   getOldParentNode(node: Node): Node {
-    var change = this.treeChanges.get(node);
+    const change = this.treeChanges.get(node);
     if (change && change.childList)
       return change.oldParentNode ? change.oldParentNode : null;
 
-    var reachabilityChange = this.treeChanges.reachabilityChange(node);
+    const reachabilityChange = this.treeChanges.reachabilityChange(node);
     if (reachabilityChange === Movement.STAYED_OUT || reachabilityChange === Movement.ENTERED)
       throw Error('getOldParentNode requested on invalid node.');
 
@@ -170,12 +170,12 @@ export class MutationProjection {
   }
 
   getOldPreviousSibling(node: Node): Node {
-    var parentNode = node.parentNode as Node;
-    var nodeChange = this.treeChanges.get(node);
+    let parentNode = node.parentNode as Node;
+    const nodeChange = this.treeChanges.get(node);
     if (nodeChange && nodeChange.oldParentNode)
       parentNode = nodeChange.oldParentNode;
 
-    var change = this.childListChangeMap.get(parentNode);
+    const change = this.childListChangeMap.get(parentNode);
     if (!change)
       throw Error('getOldPreviousSibling requested on invalid node.');
 
@@ -183,11 +183,11 @@ export class MutationProjection {
   }
 
   getOldAttribute(element: Node, attrName: string): string {
-    var change = this.treeChanges.get(element);
+    const change = this.treeChanges.get(element);
     if (!change || !change.attributes)
       throw Error('getOldAttribute requested on invalid node.');
 
-    var value = change.getAttributeOldValue(attrName);
+    const value = change.getAttributeOldValue(attrName);
     if (value === undefined)
       throw Error('getOldAttribute requested for unchanged attribute name.');
 
@@ -198,25 +198,25 @@ export class MutationProjection {
     if (!this.treeChanges.anyAttributesChanged)
       return {}; // No attributes mutations occurred.
 
-    var attributeFilter: IStringMap<boolean>;
-    var caseInsensitiveFilter: IStringMap<string>;
+    let attributeFilter: IStringMap<boolean>;
+    let caseInsensitiveFilter: IStringMap<string>;
     if (includeAttributes) {
       attributeFilter = {};
       caseInsensitiveFilter = {};
-      for (var i = 0; i < includeAttributes.length; i++) {
-        var attrName: string = includeAttributes[i];
+      for (let i = 0; i < includeAttributes.length; i++) {
+        const attrName: string = includeAttributes[i];
         attributeFilter[attrName] = true;
         caseInsensitiveFilter[attrName.toLowerCase()] = attrName;
       }
     }
 
-    var result: IStringMap<Element[]> = {};
-    var nodes = this.treeChanges.keys();
+    const result: IStringMap<Element[]> = {};
+    const nodes = this.treeChanges.keys();
 
-    for (var i = 0; i < nodes.length; i++) {
-      var node = nodes[i];
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
 
-      var change = this.treeChanges.get(node);
+      const change = this.treeChanges.get(node);
       if (!change.attributes)
         continue;
 
@@ -225,10 +225,10 @@ export class MutationProjection {
         continue;
       }
 
-      var element = <Element>node;
-      var changedAttrNames = change.getAttributeNamesMutated();
-      for (var j = 0; j < changedAttrNames.length; j++) {
-        var attrName = changedAttrNames[j];
+      const element = <Element>node;
+      const changedAttrNames = change.getAttributeNamesMutated();
+      for (let j = 0; j < changedAttrNames.length; j++) {
+        let attrName = changedAttrNames[j];
 
         if (attributeFilter &&
             !attributeFilter[attrName] &&
@@ -236,7 +236,7 @@ export class MutationProjection {
           continue;
         }
 
-        var oldValue = change.getAttributeOldValue(attrName);
+        const oldValue = change.getAttributeOldValue(attrName);
         if (oldValue === element.getAttribute(attrName))
           continue;
 
@@ -252,7 +252,7 @@ export class MutationProjection {
   }
 
   getOldCharacterData(node: Node): string {
-    var change = this.treeChanges.get(node);
+    const change = this.treeChanges.get(node);
     if (!change || !change.characterData)
       throw Error('getOldCharacterData requested on invalid node.');
 
@@ -263,14 +263,14 @@ export class MutationProjection {
     if (!this.treeChanges.anyCharacterDataChanged)
       return []; // No characterData mutations occurred.
 
-    var nodes = this.treeChanges.keys();
-    var result: Node[] = [];
-    for (var i = 0; i < nodes.length; i++) {
-      var target = nodes[i];
+    const nodes = this.treeChanges.keys();
+    const result: Node[] = [];
+    for (let i = 0; i < nodes.length; i++) {
+      let target = nodes[i];
       if (Movement.STAYED_IN !== this.treeChanges.reachabilityChange(target))
         continue;
 
-      var change = this.treeChanges.get(target);
+      let change = this.treeChanges.get(target);
       if (!change.characterData ||
           target.textContent == change.characterDataOldValue)
         continue
@@ -287,8 +287,8 @@ export class MutationProjection {
     if (!this.matchCache[selector.uid])
       this.matchCache[selector.uid] = new NodeMap<Movement>();
 
-    var cache = this.matchCache[selector.uid];
-    var result = cache.get(el);
+    const cache = this.matchCache[selector.uid];
+    let result = cache.get(el);
     if (result === undefined) {
       result = selector.matchabilityChange(el, this.treeChanges.get(el));
       cache.set(el, result);
@@ -317,14 +317,14 @@ export class MutationProjection {
     if (node.nodeType !== Node.ELEMENT_NODE)
       return Movement.STAYED_OUT;
 
-    var el = <Element>node;
+    const el = <Element>node;
 
-    var matchChanges = this.selectors.map((selector: Selector) => {
+    const matchChanges = this.selectors.map((selector: Selector) => {
       return this.computeMatchabilityChange(selector, el);
     });
 
-    var accum: Movement = Movement.STAYED_OUT;
-    var i = 0;
+    let accum: Movement = Movement.STAYED_OUT;
+    let i = 0;
 
     while (accum !== Movement.STAYED_IN && i < matchChanges.length) {
       switch (matchChanges[i]) {
@@ -352,7 +352,7 @@ export class MutationProjection {
   }
 
   getChildlistChange(el: Element): ChildListChange {
-    var change = this.childListChangeMap.get(el);
+    let change = this.childListChangeMap.get(el);
     if (!change) {
       change = new ChildListChange();
       this.childListChangeMap.set(el, change);
@@ -367,8 +367,8 @@ export class MutationProjection {
 
     this.childListChangeMap = new NodeMap<ChildListChange>();
 
-    for (var i = 0; i < this.mutations.length; i++) {
-      var mutation = this.mutations[i];
+    for (let i = 0; i < this.mutations.length; i++) {
+      const mutation = this.mutations[i];
       if (mutation.type != 'childList')
         continue;
 
@@ -376,9 +376,9 @@ export class MutationProjection {
           !this.calcOldPreviousSibling)
         continue;
 
-      var change = this.getChildlistChange(<Element>mutation.target);
+      const change = this.getChildlistChange(<Element>mutation.target);
 
-      var oldPrevious = mutation.previousSibling;
+      let oldPrevious = mutation.previousSibling;
 
       const recordOldPrevious = (node: Node, previous: Node) => {
         if (!node ||
@@ -395,8 +395,8 @@ export class MutationProjection {
         change.oldPrevious.set(node, previous);
       }
 
-      for (var j = 0; j < mutation.removedNodes.length; j++) {
-        var node = mutation.removedNodes[j];
+      for (let j = 0; j < mutation.removedNodes.length; j++) {
+        const node = mutation.removedNodes[j];
         recordOldPrevious(node, oldPrevious);
 
         if (change.added.has(node)) {
@@ -411,8 +411,8 @@ export class MutationProjection {
 
       recordOldPrevious(mutation.nextSibling, oldPrevious);
 
-      for (var j = 0; j < mutation.addedNodes.length; j++) {
-        var node = mutation.addedNodes[j];
+      for (let j = 0; j < mutation.addedNodes.length; j++) {
+        const node = mutation.addedNodes[j];
         if (change.removed.has(node)) {
           change.removed.delete(node);
           change.maybeMoved.set(node, true);
@@ -429,12 +429,12 @@ export class MutationProjection {
 
     this.processChildlistChanges();
 
-    var parentNode = node.parentNode as Node;
-    var nodeChange = this.treeChanges.get(node);
+    let parentNode = node.parentNode as Node;
+    const nodeChange = this.treeChanges.get(node);
     if (nodeChange && nodeChange.oldParentNode)
       parentNode = nodeChange.oldParentNode;
 
-    var change = this.childListChangeMap.get(parentNode);
+    const change = this.childListChangeMap.get(parentNode);
     if (!change)
       return false;
 
@@ -442,7 +442,7 @@ export class MutationProjection {
       return change.moved.get(node);
 
     change.moved = new NodeMap<boolean>();
-    var pendingMoveDecision = new NodeMap<boolean>();
+    const pendingMoveDecision = new NodeMap<boolean>();
 
     function isMoved(node: Node) {
       if (!node)
@@ -450,7 +450,7 @@ export class MutationProjection {
       if (!change.maybeMoved.has(node))
         return false;
 
-      var didMove = change.moved.get(node);
+      let didMove = change.moved.get(node);
       if (didMove !== undefined)
         return didMove;
 
@@ -471,10 +471,10 @@ export class MutationProjection {
       return didMove;
     }
 
-    var oldPreviousCache = new NodeMap<Node>();
+    const oldPreviousCache = new NodeMap<Node>();
 
     function getOldPrevious(node: Node): Node {
-      var oldPrevious = oldPreviousCache.get(node);
+      let oldPrevious = oldPreviousCache.get(node);
       if (oldPrevious !== undefined)
         return oldPrevious;
 
@@ -491,13 +491,13 @@ export class MutationProjection {
       return oldPrevious;
     }
 
-    var previousCache = new NodeMap<Node>();
+    const previousCache = new NodeMap<Node>();
 
     function getPrevious(node: Node): Node {
       if (previousCache.has(node))
         return previousCache.get(node);
 
-      var previous = node.previousSibling;
+      let previous = node.previousSibling;
       while (previous && (change.added.has(previous) || isMoved(previous)))
         previous = previous.previousSibling;
 

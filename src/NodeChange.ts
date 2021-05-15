@@ -27,11 +27,13 @@ export class NodeChange {
   }
 
   getAttributeNamesMutated(): string[] {
-    var names: string[] = [];
+    let names: string[] = [];
     if (!this.attributeOldValues)
       return names;
-    for (var name in this.attributeOldValues) {
-      names.push(name);
+    for (let name in this.attributeOldValues) {
+      if (this.attributeOldValues.hasOwnProperty(name)) {
+        names.push(name);
+      }
     }
     return names;
   }
