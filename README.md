@@ -1,9 +1,10 @@
+# Mutation Summary
+
 | Branch      | Status |
 | ----------- | ----------- |
 | Master      | ![](https://github.com/mmacfadden/mutation-summary/actions/workflows/main.yml/badge.svg?branch=master)       |
 | Develop     | ![](https://github.com/mmacfadden/mutation-summary/actions/workflows/main.yml/badge.svg?branch=develop)        |
 
-# What is this? #
 Mutation Summary is a JavaScript library that makes observing changes to the DOM fast, easy and safe.
 
 It's built on top of (and requires) a new browser API called [DOM Mutation Observers](http://dom.spec.whatwg.org/#mutation-observers).
@@ -12,12 +13,6 @@ It's built on top of (and requires) a new browser API called [DOM Mutation Obser
   * [DOM Mutation Observers API and its relationship to this library and (the deprecated) DOM Mutation Events](docs/DOMMutationObservers.md).
 
 <a href='http://www.youtube.com/watch?feature=player_embedded&v=eRZ4pO0gVWw' target='_blank'><img src='http://img.youtube.com/vi/eRZ4pO0gVWw/0.jpg' width='425' height=344 /></a>
-
-# Upgrading from 0.x to 1.x #
-
-If you have been using a 0.x version of Mutation Summary and are upgrading to a 1.x version. There are breaking changes in the API. Most notable, the API has been converted to a module based packaging.
-
-Please see the [Upgrade Guide](docs/Upgrading.md)
 
 # Why do I need it? #
 
@@ -63,6 +58,13 @@ Mutation Observers is the work of the [W3C WebApps working group](http://www.w3.
 # Great. I want to get started. What’s next? #
 
   * Check out the [tutorial](docs/Tutorial.md) and the [API reference](docs/APIReference.md).
+
+# Upgrading from 0.x to 1.x #
+
+If you have been using a 0.x version of Mutation Summary and are upgrading to a 1.x version. There are breaking changes in the API. Most notable, the API has been converted to a module based packaging.
+
+Please see the [Upgrade Guide](docs/Upgrading.md)
+
 
 # Google groups discussion list #
 
