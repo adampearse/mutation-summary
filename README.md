@@ -1,28 +1,40 @@
 # Mutation Summary
 
-| Branch      | Status |
+| Branch      | Status      |
 | ----------- | ----------- |
 | [master](https://github.com/mmacfadden/mutation-summary/tree/master)      | ![](https://github.com/mmacfadden/mutation-summary/actions/workflows/main.yml/badge.svg?branch=master)       |
 | [develop](https://github.com/mmacfadden/mutation-summary/tree/develop)     | ![](https://github.com/mmacfadden/mutation-summary/actions/workflows/main.yml/badge.svg?branch=develop)        |
 
-Mutation Summary is a JavaScript library that makes observing changes to the DOM fast, easy and safe.
+Mutation Summary is a JavaScript library that makes observing changes to the DOM fast, easy and safe. It's built on top [DOM Mutation Observers](http://dom.spec.whatwg.org/#mutation-observers), which is [widely supported](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver#browser_compatibility) support. Mutation Summary watches the DOM for changes, and summaries those changes in a compact and efficient set of changes.
 
-It's built on top of (and requires) a new browser API called [DOM Mutation Observers](http://dom.spec.whatwg.org/#mutation-observers).
+The API is simple and easy to use. To monitor all changes in the DOM:
 
-  * [Browsers which currently implement DOM Mutation Observers](docs/DOMMutationObservers.md#browser-availability).
-  * [DOM Mutation Observers API and its relationship to this library and (the deprecated) DOM Mutation Events](docs/DOMMutationObservers.md).
+```typescript
+const ms = new MutationSummary({
+  callback(summaries: Summary[]) {
+    summaries.forEach((summary: Summary) => console.log(summary));
+  },
+  queries: [
+    { all: true }
+  ]
+});
+```
 
-<a href='http://www.youtube.com/watch?feature=player_embedded&v=eRZ4pO0gVWw' target='_blank'><img src='http://img.youtube.com/vi/eRZ4pO0gVWw/0.jpg' width='425' height=344 /></a>
+# Getting Started 
+For more detailed information on how to use Mutation Summary see these references:
 
-# Why do I need it? #
+* [Tutorial](docs/Tutorial.md): Check out the  for basic usage.
+* [API Docs](https://mmacfadden.github.io/mutation-summary/): Explore the full Mutation Summary API.
 
-Mutation Summary does five main things for you:
+# Why do I need it?
 
-  * **It tells you how the document is different now from how it was.** As its name suggests, it summarizes what’s happened. It’s as if it takes a picture of the document when you first create it, and then again after each time it calls you back. When things have changed, it calls you with a concise description of exactly what’s different now from the last picture it took for you.
-  * **It handles any and all changes, no matter how complex.** All kinds of things can happen to the DOM: values can change and but put back to what they were, large parts can be pulled out, changed, rearranged, put back. Mutation Summary can take any crazy thing you throw at it. Go ahead, tear the document to shreds, Mutation Summary won’t even blink.
-  * **It lets you express what kinds of things you’re interested in.** It presents a query API that lets you tell it exactly what kinds of changes you’re interested in. This includes support for simple CSS-like selector descriptions of elements you care about.
-  * **It’s fast.** The time and memory it takes is dependant on number of changes that occurred (which typically involves only a few nodes) -- not the size of your document (which is commonly thousands of nodes).
-  * **It can automatically ignore changes you make during your callback.** Mutation Summary is going to call you back when changes have occurred. If you need to react to those changes by making more changes -- won’t you hear about those changes the next time it calls you back? Not unless you [ask for that](docs/APIReference.md#configuration-options). By default, it stops watching the document immediately before it calls you back and resumes watching as soon as your callback finishes.
+The raw MutationObserver API is powerful, yet complex and cumbersome to use directly. Mutation Summary does five main things for you:
+
+  1. **It tells you how the document is different now from how it was.** As its name suggests, it summarizes what’s happened. It’s as if it takes a picture of the document when you first create it, and then again after each time it calls you back. When things have changed, it calls you with a concise description of exactly what’s different now from the last picture it took for you.
+  2. **It handles any and all changes, no matter how complex.** All kinds of things can happen to the DOM: values can change and but put back to what they were, large parts can be pulled out, changed, rearranged, put back. Mutation Summary can take any crazy thing you throw at it. Go ahead, tear the document to shreds, Mutation Summary won’t even blink.
+  3. **It lets you express what kinds of things you’re interested in.** It presents a query API that lets you tell it exactly what kinds of changes you’re interested in. This includes support for simple CSS-like selector descriptions of elements you care about.
+  4. **It’s fast.** The time and memory it takes is dependant on number of changes that occurred (which typically involves only a few nodes) -- not the size of your document (which is commonly thousands of nodes).
+  5. **It can automatically ignore changes you make during your callback.** Mutation Summary is going to call you back when changes have occurred. If you need to react to those changes by making more changes -- won’t you hear about those changes the next time it calls you back? Not unless you [ask for that](docs/APIReference.md#configuration-options). By default, it stops watching the document immediately before it calls you back and resumes watching as soon as your callback finishes.
 
 # What is it useful for? #
 
@@ -43,28 +55,11 @@ The intent here isn't to be all things to all use-cases. Mutation Summary is not
 
 Note that both of the above use cases are possible given the data that the underlying Mutation Observers API provides -- we simply judged them to be outside the "80% use case" that we targeted with this particular library.
 
-# Where can Mutation Summary be used? #
-
-The Mutation Summary library depends on the presence of the Mutation Observer DOM API. Mutation Observers are available in
-
- * [Google Chrome](https://www.google.com/chrome)
- * [Firefox](http://www.mozilla.org/en-US/firefox/new/) 
- * [Safari](http://www.apple.com/safari/)
- * [Opera](http://www.opera.com/)
- * [IE11](http://www.microsoft.com/ie)
-
-Mutation Observers is the work of the [W3C WebApps working group](http://www.w3.org/2008/webapps/). In the future it will be implemented in other browsers (we’ll keep the above list of supporting browsers as up-to-date as possible).
-
-# Great. I want to get started. What’s next? #
-
-  * Check out the [tutorial](docs/Tutorial.md) and the [API reference](docs/APIReference.md).
-
 # Upgrading from 0.x to 1.x #
 
 If you have been using a 0.x version of Mutation Summary and are upgrading to a 1.x version. There are breaking changes in the API. Most notable, the API has been converted to a module based packaging.
 
 Please see the [Upgrade Guide](docs/Upgrading.md)
-
 
 # Google groups discussion list #
 
