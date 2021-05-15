@@ -1,6 +1,7 @@
 # Upgrading
+This document provides tips on upgrading from / to various versions of the Mutation Summary library.
 
-# 0.x => 1.x
+## 0.x => 1.x
 
 The 0.x versions of Mutation Summary were built in a monolithic style and 
 contributed values to the global scope and only provided a plain JavaScript
@@ -14,7 +15,7 @@ module that can still be hot linked in a global environment.
 
 Users of this version should update their code to use imports such as:
 
-## Module Usage
+### Module Usage
 ```typescript
 import {MutationSummary} from "mutation-summary";
 
@@ -28,7 +29,7 @@ const ms = new MutationSummary({
 });
 ```
 
-## UMD Global Scope Usage
+### UMD Global Scope Usage
 If including the UMD module in an HTML file you must note that all values
 exported by the module will be under the `MutationSummary` namespace.  Thus,
 you will need to access the classes as follows:
