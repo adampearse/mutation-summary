@@ -27,12 +27,11 @@
     "docs"
   ],
   "scripts": {
+    "test": "karma start",
     "build:esm": "tsc --outDir dist/module",
     "build:commonjs": "tsc --module commonjs --outDir dist/lib",
     "build:types": "tsc --declaration true --emitDeclarationOnly true --outDir dist/types && node ./scripts/enhance-types.js",
     "build:umd": "rollup -c rollup.config.js",
-    "test:compile": "npm run build:types && tsc --module none tests/test.ts util/tree-mirror.ts",
-    "test:run": "TS_NODE_PROJECT='./tsconfig.testing.json' mocha",
     "dist": "npm run build:esm && npm run build:commonjs && npm run build:umd && npm run build:types",
     "clean": "rimraf dist",
     "prepack": "npm run dist"
@@ -54,6 +53,12 @@
     "chai": "^4.3.4",
     "global-jsdom": "^8.1.0",
     "jsdom": "^16.5.3",
+    "karma": "6.3.2",
+    "karma-chrome-launcher": "3.1.0",
+    "karma-cli": "2.0.0",
+    "karma-mocha": "2.0.1",
+    "karma-mocha-reporter": "^2.2.5",
+    "karma-typescript": "5.5.1",
     "mocha": "^8.4.0",
     "rimraf": "^3.0.2",
     "rollup": "2.47.0",

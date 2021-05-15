@@ -4,6 +4,4 @@
 node_modules
 .project
 dist
-
-util/tree-mirror.js
-tests/test.js
+coverage

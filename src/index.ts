@@ -35,3 +35,4 @@ export * from "./Qualifier";
 export * from "./Selector";
 export * from "./Summary";
 export * from "./TreeChanges";
+export * from "./tree-mirror";
