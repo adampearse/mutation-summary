@@ -4,7 +4,7 @@ This document is a tutorial that describes how to use the Mutation Summary libra
 
 Other resources:
   * A [high-level overview](https://github.com/rafaelw/mutation-summary) of what this library is, how it can help you, and the new [DOM Mutation Observers](http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#mutation-observers) browser API on which it depends.
-  * The MutationSummary [API reference](APIReference.md) document.
+  * The MutationSummary [API reference](docs/APIReference.mdce.md) document.
 
 # Observing a single attribute #
 
@@ -30,7 +30,7 @@ var observer = new MutationSummary({
 });
 ```
 
-This creates a new `MutationSummary` that begins observing the entire document immediately. `MutationSummary` requires only two things to work: the function to call when it has changes to report, and [at least one “query”](APIReference.md#configuration-options) of what it should be watching for. In this case, we’re only asking for a single [attribute query](APIReference.md#the-attribute-query) and giving it the name of the attribute we’re looking for.
+This creates a new `MutationSummary` that begins observing the entire document immediately. `MutationSummary` requires only two things to work: the function to call when it has changes to report, and [at least one “query”](docs/APIReference.mdce.md#configuration-options) of what it should be watching for. In this case, we’re only asking for a single [attribute query](docs/APIReference.mdce.md#the-attribute-query) and giving it the name of the attribute we’re looking for.
 
 Now, whenever any of the above three things have happened, `MutationSummary` will invoke our `handleHTweetChanges` and pass as the only argument an array containing a summary of changes for each query that was requested. We might implement `handleHTweetChanges` like this:
 
@@ -57,8 +57,8 @@ function handleHTweetChanges(summaries) {
 
 A couple things to note at this point:
   * **What Mutation Summary reports will always be true from its callback’s point of view.** For example, if some code changed an `data-h-tweet` attribute from ‘#beiber” to ‘#gaga’ and then some other code changed it back to ‘#beiber’ by the time our callback is invoked, Mutation Summary won’t bother telling us about the change, because from our point of view there isn’t one.
-  * **Mutation Summary defaults to observing the entire document of the main window.** If we had wanted to only observe a portion we could have used the [rootNode](APIReference.md#configuration-options) option.
-  * **Mutation Summary will ignore changes that are made during the course of its `callback`.** For example, if `added` contained an element with “#biber” and our extension decides that it should be “#beiber”, then the next time Mutation Summary invokes `handleHTweetChanges`, it will not report the change from ‘#biber’ to ‘#beiber’. Want to hear about something that you did? You probably don’t--but if you do, you can set [observeOwnChanges](APIReference.md#configuration-options) to true.
+  * **Mutation Summary defaults to observing the entire document of the main window.** If we had wanted to only observe a portion we could have used the [rootNode](docs/APIReference.mdce.md#configuration-options) option.
+  * **Mutation Summary will ignore changes that are made during the course of its `callback`.** For example, if `added` contained an element with “#biber” and our extension decides that it should be “#beiber”, then the next time Mutation Summary invokes `handleHTweetChanges`, it will not report the change from ‘#biber’ to ‘#beiber’. Want to hear about something that you did? You probably don’t--but if you do, you can set [observeOwnChanges](docs/APIReference.mdce.md#configuration-options) to true.
 
 # Observing elements and attributes on those elements #
 
@@ -71,7 +71,7 @@ Let's look at another hypothetical example inspired by the requirements of real-
 
 Our library will probably want to look for all such elements in the page when it loads by listening to the `DOMContentLoaded` event, doing a `querySelectorAll(“*[data-widget]”)` and setting them all up.
 
-But our library also wants to respond to new widgets that appear in the page, possibly created by script or a templating library. In order to accomplish this, we’d create an [element query](APIReference.md#the-element-query) like this:
+But our library also wants to respond to new widgets that appear in the page, possibly created by script or a templating library. In order to accomplish this, we’d create an [element query](docs/APIReference.mdce.md#the-element-query) like this:
 
 ```
 var observer = new MutationSummary({
@@ -92,7 +92,7 @@ function updateWidgets(summaries) {
 }
 ```
 
-The [element query](APIReference.md#the-element-query) instructs the `MutationSummary` to watch for particular elements. The contents of the `element` string can be a [very simple subset of CSS](APIReference.md#supported-selector-syntax). This allows you to watch literal elements or do something more complex, as in this example.
+The [element query](docs/APIReference.mdce.md#the-element-query) instructs the `MutationSummary` to watch for particular elements. The contents of the `element` string can be a [very simple subset of CSS](docs/APIReference.mdce.md#supported-selector-syntax). This allows you to watch literal elements or do something more complex, as in this example.
 
 But doesn’t our widget library also want to respond correctly when an existing widget changes its type or theme? It does, and it can:
 
@@ -165,5 +165,5 @@ If your page uses multiple libraries that do different things (say a UI widget l
 
 # Learning More #
 
-  * Refer to the [API Reference](APIReference.md) document -- in particular to learn about the two other types of queries: [characterData](APIReference.md#the-characterdata-query) and [all](APIReference.md#the-all-query).
+  * Refer to the [API Reference](docs/APIReference.mdce.md) document -- in particular to learn about the two other types of queries: [characterData](docs/APIReference.mdce.md#the-characterdata-query) and [all](docs/APIReference.mdce.md#the-all-query).
   * Examine the [PageMirror](examples/pagemirror_extension) extension which shows how to use the all query and the included TreeMirror utility class to fully mirror the contents of a document.
