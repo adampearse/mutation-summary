@@ -1,4 +1,5 @@
-///<reference path='../src/mutation-summary.ts'/>
+///<reference path='../dist/types/index.d.ts'/>
+
 
 // Copyright 2013 Google Inc.
 //
@@ -22,7 +23,7 @@ interface NodeData {
   systemId?:string;
   textContent?:string;
   tagName?:string;
-  attributes?:StringMap<string>;
+  attributes?: MutationSummary.IStringMap<string>;
   childNodes?:NodeData[];
 }
 
@@ -32,7 +33,7 @@ interface PositionData extends NodeData {
 }
 
 interface AttributeData extends NodeData {
-  attributes:StringMap<string>;
+  attributes: MutationSummary.IStringMap<string>;
 }
 
 interface TextData extends NodeData{
@@ -41,7 +42,7 @@ interface TextData extends NodeData{
 
 class TreeMirror {
 
-  private idMap:NumberMap<Node>;
+  private idMap: MutationSummary.INumberMap<Node>;
 
   constructor(public root:Node, public delegate?:any) {
     this.idMap = {};
@@ -173,10 +174,10 @@ class TreeMirror {
 class TreeMirrorClient {
   private nextId:number;
 
-  private mutationSummary:MutationSummary;
-  private knownNodes:NodeMap<number>;
+  private mutationSummary:MutationSummary.MutationSummary;
+  private knownNodes:MutationSummary.NodeMap<number>;
 
-  constructor(public target:Node, public mirror:any, testingQueries:Query[]) {
+  constructor(public target:Node, public mirror:any, testingQueries:MutationSummary.IQuery[]) {
     this.nextId = 1;
     this.knownNodes = new MutationSummary.NodeMap<number>();
 
@@ -189,14 +190,14 @@ class TreeMirrorClient {
 
     var self = this;
 
-    var queries = [{ all: true }] as Query[];
+    var queries = [{ all: true }] as MutationSummary.IQuery[];
 
     if (testingQueries)
       queries = queries.concat(testingQueries);
 
-    this.mutationSummary = new MutationSummary({
+    this.mutationSummary = new MutationSummary.MutationSummary({
       rootNode: target,
-      callback: (summaries:Summary[]) => {
+      callback: (summaries:MutationSummary.Summary[]) => {
         this.applyChanged(summaries);
       },
       queries: queries
@@ -274,7 +275,7 @@ class TreeMirrorClient {
                                  reordered:Node[]):PositionData[] {
     var all = added.concat(reparented).concat(reordered);
 
-    var parentMap = new MutationSummary.NodeMap<NodeMap<boolean>>();
+    var parentMap = new MutationSummary.NodeMap<MutationSummary.NodeMap<boolean>>();
 
     all.forEach((node) => {
       var parent = node.parentNode;
@@ -314,7 +315,7 @@ class TreeMirrorClient {
     return moved;
   }
 
-  private serializeAttributeChanges(attributeChanged:StringMap<Element[]>):AttributeData[] {
+  private serializeAttributeChanges(attributeChanged:MutationSummary.IStringMap<Element[]>):AttributeData[] {
     var map = new MutationSummary.NodeMap<AttributeData>();
 
     Object.keys(attributeChanged).forEach((attrName) => {
@@ -335,8 +336,8 @@ class TreeMirrorClient {
     });
   }
 
-  applyChanged(summaries:Summary[]) {
-    var summary:Summary = summaries[0]
+  applyChanged(summaries:MutationSummary.Summary[]) {
+    var summary:MutationSummary.Summary = summaries[0]
 
     var removed:NodeData[] = summary.removed.map((node:Node) => {
       return this.serializeNode(node);

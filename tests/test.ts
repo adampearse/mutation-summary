@@ -1,5 +1,5 @@
 ///<reference path='third_party/DefinitelyTyped/chai/chai-assert.d.ts'/>
-///<reference path='../src/mutation-summary.ts'/>
+///<reference path='../dist/types/index.d.ts'/>
 ///<reference path='../util/tree-mirror.ts'/>
 
 declare var suite:(s:string, a:any)=>any;
@@ -23,11 +23,11 @@ function compareNodeArrayIgnoreOrder(expected:Node[], actual:Node[]) {
 suite('Mutation Summary', function() {
 
   var testDiv:HTMLElement;
-  var observer:MutationSummary;
+  var observer:MutationSummary.MutationSummary;
   var observing:boolean;
   var changed:Node[];
-  var query:Query;
-  var options:Options;
+  var query:MutationSummary.IQuery;
+  var options:MutationSummary.IMutationSummaryOptions;
 
   setup(function() {
     testDiv = document.getElementById('test-div');
@@ -39,7 +39,7 @@ suite('Mutation Summary', function() {
     testDiv.textContent = '';
   });
 
-  function startObserving(q?:Query, extraOptions?:any) {
+  function startObserving(q?:MutationSummary.IQuery, extraOptions?:any) {
     query = q || { all: true };
     options = {
       rootNode: testDiv,
@@ -55,7 +55,7 @@ suite('Mutation Summary', function() {
       });
     }
 
-    observer = new MutationSummary(options);
+    observer = new MutationSummary.MutationSummary(options);
 
     observing = true;
   }
@@ -67,8 +67,8 @@ suite('Mutation Summary', function() {
     observing = false;
   }
 
-  function assertSummary(expect:any, opt_summaries?:Summary[]) {
-    var changed:Summary = opt_summaries ? opt_summaries[0] : observer.takeSummaries()[0];
+  function assertSummary(expect:any, opt_summaries?:MutationSummary.Summary[]) {
+    var changed:MutationSummary.Summary = opt_summaries ? opt_summaries[0] : observer.takeSummaries()[0];
 
     expect.added = expect.added || [];
     expect.removed = expect.removed || [];
@@ -614,8 +614,8 @@ suite('Mutation Summary', function() {
   });
 
   test('NoValidator', function() {
-    var validator = MutationSummary.createQueryValidator;
-    MutationSummary.createQueryValidator = undefined;
+    var validator = MutationSummary.MutationSummary.createQueryValidator;
+    MutationSummary.MutationSummary.createQueryValidator = undefined;
 
     startObserving();
 
@@ -632,7 +632,7 @@ suite('Mutation Summary', function() {
       removed: [span]
     });
 
-    MutationSummary.createQueryValidator = validator;
+    MutationSummary.MutationSummary.createQueryValidator = validator;
   });
 
   test('Add Remove Basic', function() {
@@ -1006,7 +1006,7 @@ suite('Mutation Summary', function() {
     var div:Node;
     var count = 0;
 
-    var summary1 = new MutationSummary({
+    var summary1 = new MutationSummary.MutationSummary({
       observeOwnChanges: false,
       queries: [{ all: true}],
       callback: function(summaries) {
@@ -1028,7 +1028,7 @@ suite('Mutation Summary', function() {
       }
     });
 
-    var summary2 = new MutationSummary({
+    var summary2 = new MutationSummary.MutationSummary({
       observeOwnChanges: false,
       queries: [{ all: true}],
       callback: function(summaries) {
@@ -1058,7 +1058,7 @@ suite('Mutation Summary', function() {
     var div = document.createElement('div');
 
     var callbackCount = 0;
-    var summary = new MutationSummary({
+    var summary = new MutationSummary.MutationSummary({
       queries: [{ all: true }],
       rootNode: div,
       callback: function(summaries) {
@@ -1119,12 +1119,12 @@ suite('TreeMirror Fuzzer', function() {
       getReachable(nonDoc, nonRootNodes, true);
     }
 
-    var testingQueries:Query[] = [{ characterData: true} ];
+    var testingQueries:MutationSummary.IQuery[] = [{ characterData: true} ];
 
-    var attributeQuery:Query = { attribute: randomAttributeName() };
+    var attributeQuery:MutationSummary.IQuery = { attribute: randomAttributeName() };
     testingQueries.push(attributeQuery);
 
-    var elementQuery:Query = {
+    var elementQuery:MutationSummary.IQuery = {
       element: randomTagname() + '[' + randomAttributeName() + ']',
       elementAttributes: randomAttributeName() + ' ' + randomAttributeName()
     };
