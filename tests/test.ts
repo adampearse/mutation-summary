@@ -2,15 +2,15 @@
 ///<reference path='../dist/types/index.d.ts'/>
 ///<reference path='../util/tree-mirror.ts'/>
 
-declare var suite:(s:string, a:any)=>any;
-declare var test:(s:string, a:any)=>any;
-declare var setup:(a:any)=>any;
-declare var teardown:(a:any)=>any;
+declare const suite:(s:string, a:any)=>any;
+declare const test:(s:string, a:any)=>any;
+declare const setup:(a:any)=>any;
+declare const teardown:(a:any)=>any;
 
 function compareNodeArrayIgnoreOrder(expected:Node[], actual:Node[]) {
   assert.strictEqual(expected.length, actual.length);
 
-  var map = new MutationSummary.NodeMap<boolean>();
+  const map = new MutationSummary.NodeMap<boolean>();
   expected.forEach(function(node) {
     map.set(node, true);
   });
@@ -22,12 +22,11 @@ function compareNodeArrayIgnoreOrder(expected:Node[], actual:Node[]) {
 
 suite('Mutation Summary', function() {
 
-  var testDiv:HTMLElement;
-  var observer:MutationSummary.MutationSummary;
-  var observing:boolean;
-  var changed:Node[];
-  var query:MutationSummary.IQuery;
-  var options:MutationSummary.IMutationSummaryOptions;
+  let testDiv:HTMLElement;
+  let observer:MutationSummary.MutationSummary;
+  let observing:boolean;
+  let query:MutationSummary.IQuery;
+  let options:MutationSummary.IMutationSummaryOptions;
 
   setup(function() {
     testDiv = document.getElementById('test-div');
@@ -68,7 +67,7 @@ suite('Mutation Summary', function() {
   }
 
   function assertSummary(expect:any, opt_summaries?:MutationSummary.Summary[]) {
-    var changed:MutationSummary.Summary = opt_summaries ? opt_summaries[0] : observer.takeSummaries()[0];
+    const changed:MutationSummary.Summary = opt_summaries ? opt_summaries[0] : observer.takeSummaries()[0];
 
     expect.added = expect.added || [];
     expect.removed = expect.removed || [];
@@ -117,7 +116,7 @@ suite('Mutation Summary', function() {
     if (query.attribute || query.characterData) {
       assert(typeof expect.valueChanged == typeof changed.valueChanged);
       compareNodeArrayIgnoreOrder(expect.valueChanged, changed.valueChanged);
-      var getOldFunction = query.attribute ? 'getOldAttribute' : 'getOldCharacterData';
+      const getOldFunction = query.attribute ? 'getOldAttribute' : 'getOldCharacterData';
 
       expect.valueChanged.forEach(function(node:Node, index:number) {
         assert.strictEqual(expect.oldValues[index], changed[getOldFunction](node, query.attribute));
@@ -148,7 +147,7 @@ suite('Mutation Summary', function() {
 
 
   test('Disconnect and Reconnect', function() {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     testDiv.appendChild(div);
     div.setAttribute('foo', '1');
 
@@ -159,7 +158,7 @@ suite('Mutation Summary', function() {
 
     div.setAttribute('foo', '2');
 
-    var summaries = observer.disconnect();
+    const summaries = observer.disconnect();
     div.setAttribute('bar', '3'); // should be ignored.
     observer.reconnect();
 
@@ -178,14 +177,14 @@ suite('Mutation Summary', function() {
   });
 
   test('Attribute Basic', function() {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     testDiv.appendChild(div);
     div.setAttribute('foo', 'bar');
 
-    var div2 = document.createElement('div');
+    const div2 = document.createElement('div');
     testDiv.appendChild(div2);
 
-    var div3 = document.createElement('div');
+    const div3 = document.createElement('div');
     div3.setAttribute('foo', 'bat');
 
     startObserving({
@@ -221,14 +220,14 @@ suite('Mutation Summary', function() {
   test('Attribute -- Array proto changed', function() {
     (Array.prototype as any).foo = 'bar';
 
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     testDiv.appendChild(div);
     div.setAttribute('foo', 'bar');
 
-    var div2 = document.createElement('div');
+    const div2 = document.createElement('div');
     testDiv.appendChild(div2);
 
-    var div3 = document.createElement('div');
+    const div3 = document.createElement('div');
     div3.setAttribute('foo', 'bat');
 
     startObserving({
@@ -263,14 +262,14 @@ suite('Mutation Summary', function() {
   });
 
   test('Attribute Case Insensitive', function() {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     testDiv.appendChild(div);
     div.setAttribute('foo', 'bar');
 
-    var div2 = document.createElement('div');
+    const div2 = document.createElement('div');
     testDiv.appendChild(div2);
 
-    var div3 = document.createElement('div');
+    const div3 = document.createElement('div');
     div3.setAttribute('foo', 'bat');
 
     startObserving({
@@ -304,11 +303,11 @@ suite('Mutation Summary', function() {
   });
 
   test('CharacterData Basic', function() {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     testDiv.appendChild(div);
     div.innerHTML = 'foo';
-    var text = div.firstChild;
-    var comment = document.createComment('123');
+    const text = div.firstChild;
+    const comment = document.createComment('123');
     div.appendChild(comment);
 
     startObserving({
@@ -316,9 +315,9 @@ suite('Mutation Summary', function() {
     });
     text.textContent = 'bar';
     comment.textContent = '456'
-    var comment2 = div.appendChild(document.createComment('456'));
+    const comment2 = div.appendChild(document.createComment('456'));
     comment2.textContent = '789';
-    var div2 = testDiv.appendChild(document.createElement('div'));
+    const div2 = testDiv.appendChild(document.createElement('div'));
     assertSummary({
       added: [comment2],
       reparented: [],
@@ -354,9 +353,9 @@ suite('Mutation Summary', function() {
       element: 'div, A, p'
     });
 
-    var div = testDiv.appendChild(document.createElement('div'));
-    var span = div.appendChild(document.createElement('span'));
-    var p = testDiv.appendChild(document.createElement('P'));
+    const div = testDiv.appendChild(document.createElement('div'));
+    div.appendChild(document.createElement('span'));
+    const p = testDiv.appendChild(document.createElement('P'));
     assertSummary({
       added: [div, p]
     });
@@ -371,19 +370,19 @@ suite('Mutation Summary', function() {
       element: 'div[foo], A, *[bar], div[ baz = "bat"], span#foo[blow~=blarg]'
     });
 
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     testDiv.appendChild(div);
     div.setAttribute('foo', 'foo');
-    var div2 = document.createElement('div');
+    const div2 = document.createElement('div');
     testDiv.appendChild(div2);
     div2.setAttribute('fooz', 'foo');
-    var div3 = document.createElement('div');
+    const div3 = document.createElement('div');
     testDiv.appendChild(div3);
     div3.setAttribute('baz', 'fat');
 
-    var span = document.createElement('span');
+    const span = document.createElement('span');
     div.appendChild(span);
-    var p = document.createElement('P');
+    const p = document.createElement('P');
     testDiv.appendChild(p);
     p.setAttribute('baz', 'baz');
     assertSummary({
@@ -407,7 +406,7 @@ suite('Mutation Summary', function() {
   });
 
   test('Case Insensitive Element Attributes', function() {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     testDiv.appendChild(div);
 
     startObserving({
@@ -430,19 +429,19 @@ suite('Mutation Summary', function() {
       elementAttributes: 'FOO'
     });
 
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     testDiv.appendChild(div);
     div.setAttribute('FOO', 'foo');
-    var div2 = document.createElement('div');
+    const div2 = document.createElement('div');
     testDiv.appendChild(div2);
     div2.setAttribute('fooz', 'foo');
-    var div3 = document.createElement('div')
+    const div3 = document.createElement('div')
     testDiv.appendChild(div3);
     div3.setAttribute('baz', 'fat');
 
-    var span = document.createElement('span');
+    const span = document.createElement('span');
     div.appendChild(span);
-    var p = document.createElement('P');
+    const p = document.createElement('P');
     testDiv.appendChild(p);
     p.setAttribute('baz', 'baz');
     assertSummary({
@@ -470,8 +469,8 @@ suite('Mutation Summary', function() {
   });
 
   test('Element SVGCaseSensitive', function() {
-    var docType = document.implementation.createDocumentType("svg", "-//W3C//DTD SVG 1.1//EN", null);
-    var svgDoc = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg', docType);
+    const docType = document.implementation.createDocumentType("svg", "-//W3C//DTD SVG 1.1//EN", null);
+    const svgDoc = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg', docType);
 
     testDiv = svgDoc.createElement('div');
 
@@ -480,23 +479,23 @@ suite('Mutation Summary', function() {
       elementAttributes: 'FOO'
     });
 
-    var div = svgDoc.createElement('div');
+    const div = svgDoc.createElement('div');
     testDiv.appendChild(div);
     div.setAttribute('FOO', 'foo');
 
-    var div2 = svgDoc.createElement('div');
+    const div2 = svgDoc.createElement('div');
     testDiv.appendChild(div2);
     div2.setAttribute('foo', 'foo');
 
-    var div3 = svgDoc.createElement('div');
+    const div3 = svgDoc.createElement('div');
     testDiv.appendChild(div3);
     div3.setAttribute('baz', 'fat');
 
-    var span = svgDoc.createElement('span');
+    const span = svgDoc.createElement('span');
     div.appendChild(span);
-    var upperSpan = svgDoc.createElementNS('http://www.w3.org/2000/svg', 'SPAN');
+    const upperSpan = svgDoc.createElementNS('http://www.w3.org/2000/svg', 'SPAN');
     div.appendChild(upperSpan);
-    var p = svgDoc.createElement('P');
+    const p = svgDoc.createElement('P');
     testDiv.appendChild(p);
     p.setAttribute('bar', 'baz');
     assertSummary({
@@ -528,13 +527,13 @@ suite('Mutation Summary', function() {
   });
 
   test('Element ElementAttributes', function() {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     testDiv.appendChild(div);
     div.setAttribute('foo', 'bar');
     div.setAttribute('baz', 'bat');
     div.setAttribute('boo', 'bag');
 
-    var div2 = document.createElement('div');
+    const div2 = document.createElement('div');
     testDiv.appendChild(div2);
 
     startObserving({
@@ -549,7 +548,7 @@ suite('Mutation Summary', function() {
 
     div2.setAttribute('baz', 'blarg');
 
-    var div3 = document.createElement('div');
+    const div3 = document.createElement('div');
     testDiv.appendChild(div3);
     div3.setAttribute('baz', 'bar');
     div2.appendChild(div);
@@ -576,11 +575,11 @@ suite('Mutation Summary', function() {
   });
 
   test('Element With Classname', function() {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     testDiv.appendChild(div);
     div.setAttribute('class', 'foo');
 
-    var div2 = document.createElement('div');
+    const div2 = document.createElement('div');
     testDiv.appendChild(div2);
 
     startObserving({
@@ -590,7 +589,7 @@ suite('Mutation Summary', function() {
     div.setAttribute('class', 'bar foo baz');
     div2.setAttribute('class', 'foo');
 
-    var div3 = document.createElement('div');
+    const div3 = document.createElement('div');
     testDiv.appendChild(div3);
     div3.setAttribute('class', 'bar');
     assertSummary({
@@ -600,7 +599,7 @@ suite('Mutation Summary', function() {
     testDiv.removeChild(div);
     div2.removeAttribute('class');
     div3.setAttribute('class', 'foo');
-    var div4 = document.createElement('div');
+    const div4 = document.createElement('div');
     testDiv.appendChild(div4);
     div4.setAttribute('class', 'foobaz');
     assertSummary({
@@ -614,14 +613,14 @@ suite('Mutation Summary', function() {
   });
 
   test('NoValidator', function() {
-    var validator = MutationSummary.MutationSummary.createQueryValidator;
+    const validator = MutationSummary.MutationSummary.createQueryValidator;
     MutationSummary.MutationSummary.createQueryValidator = undefined;
 
     startObserving();
 
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     testDiv.appendChild(div);
-    var span = document.createElement('span');
+    const span = document.createElement('span');
     div.appendChild(span);
     assertSummary({
       added: [div, span]
@@ -638,9 +637,9 @@ suite('Mutation Summary', function() {
   test('Add Remove Basic', function() {
     startObserving();
 
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     testDiv.appendChild(div);
-    var span = document.createElement('span');
+    const span = document.createElement('span');
     div.appendChild(span);
     assertSummary({
       added: [div, span]
@@ -653,13 +652,13 @@ suite('Mutation Summary', function() {
   });
 
   test('Sequential Removals', function() {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
     testDiv.appendChild(div);
 
     startObserving();
 
     testDiv.removeChild(div);
-    var div2 = document.createElement('div');
+    const div2 = document.createElement('div');
     div2.appendChild(div);
     testDiv.appendChild(div2);
     div2.removeChild(div);
@@ -670,11 +669,11 @@ suite('Mutation Summary', function() {
   });
 
   test('Add And Remove Outside Tree', function() {
-    var div1 = document.createElement('div');
+    const div1 = document.createElement('div');
     testDiv.appendChild(div1);
-    var div2 = document.createElement('div');
+    const div2 = document.createElement('div');
     div1.appendChild(div2);
-    var span = document.createElement('span');
+    const span = document.createElement('span');
     div2.appendChild(span);
 
     startObserving();
@@ -693,13 +692,13 @@ suite('Mutation Summary', function() {
   });
 
   test('Add Outside Of Tree And Reinsert', function() {
-    var div1 = testDiv.appendChild(document.createElement('div'));
+    const div1 = testDiv.appendChild(document.createElement('div'));
 
     startObserving();
     testDiv.removeChild(div1);
     // This add is taking place while outside the tree, but should be considered
     // and 'add' because the parent node is later replaced.
-    var span = div1.appendChild(document.createElement('span'));
+    const span = div1.appendChild(document.createElement('span'));
     testDiv.appendChild(div1);
     assertSummary({
       added: [span]
@@ -707,9 +706,9 @@ suite('Mutation Summary', function() {
   });
 
   test('Reparented', function() {
-    var div1 = testDiv.appendChild(document.createElement('div'));
-    var div2 = div1.appendChild(document.createElement('div'));
-    var span = div2.appendChild(document.createElement('span'));
+    const div1 = testDiv.appendChild(document.createElement('div'));
+    const div2 = div1.appendChild(document.createElement('div'));
+    div2.appendChild(document.createElement('span'));
 
     startObserving();
 
@@ -723,21 +722,21 @@ suite('Mutation Summary', function() {
   });
 
   test('Adding To Detached Subtree', function() {
-    var div1 = testDiv.appendChild(document.createElement('div'));
+    const div1 = testDiv.appendChild(document.createElement('div'));
 
     startObserving();
     testDiv.removeChild(div1);
-    var div2 = div1.appendChild(document.createElement('div'));
-    var span = div2.appendChild(document.createElement('span'));
+    const div2 = div1.appendChild(document.createElement('div'));
+    div2.appendChild(document.createElement('span'));
     assertSummary({
       removed: [div1]
     });
   });
 
   test('Reorder Inside Tree', function() {
-    var div1 = testDiv.appendChild(document.createElement('div'));
-    var div2 = div1.appendChild(document.createElement('div'));
-    var div3 = div2.appendChild(document.createElement('div'));
+    const div1 = testDiv.appendChild(document.createElement('div'));
+    const div2 = div1.appendChild(document.createElement('div'));
+    const div3 = div2.appendChild(document.createElement('div'));
 
     startObserving();
 
@@ -753,11 +752,11 @@ suite('Mutation Summary', function() {
   });
 
   test('Removed Old Previous Sibling', function() {
-    var div1 = testDiv.appendChild(document.createElement('div'));
-    var div2 = testDiv.appendChild(document.createElement('div'));
-    var div3 = testDiv.appendChild(document.createElement('div'));
-    var div4 = div3.appendChild(document.createElement('div'));
-    var div5 = div3.appendChild(document.createElement('div'));
+    const div1 = testDiv.appendChild(document.createElement('div'));
+    const div2 = testDiv.appendChild(document.createElement('div'));
+    const div3 = testDiv.appendChild(document.createElement('div'));
+    const div4 = div3.appendChild(document.createElement('div'));
+    const div5 = div3.appendChild(document.createElement('div'));
 
     startObserving(undefined, { oldPreviousSibling: true });
 
@@ -772,9 +771,9 @@ suite('Mutation Summary', function() {
   });
 
   test('Reorder Inside Tree And Add Middle', function() {
-    var div1 = testDiv.appendChild(document.createElement('div'));
-    var div2 = div1.appendChild(document.createElement('div'));
-    var div3 = div2.appendChild(document.createElement('div'));
+    const div1 = testDiv.appendChild(document.createElement('div'));
+    const div2 = div1.appendChild(document.createElement('div'));
+    const div3 = div2.appendChild(document.createElement('div'));
 
     startObserving();
 
@@ -783,7 +782,7 @@ suite('Mutation Summary', function() {
     div2.removeChild(div3);
     testDiv.appendChild(div3);
     div3.appendChild(div2);
-    var div4 = document.createElement('div');
+    const div4 = document.createElement('div');
     div2.appendChild(div4);
     div4.appendChild(div1);
     assertSummary({
@@ -793,9 +792,9 @@ suite('Mutation Summary', function() {
   });
 
   test('Reorder Outside Tree', function() {
-    var div1 = document.createElement('div');
-    var div2 = div1.appendChild(document.createElement('div'));
-    var div3 = div2.appendChild(document.createElement('div'));
+    const div1 = document.createElement('div');
+    const div2 = div1.appendChild(document.createElement('div'));
+    const div3 = div2.appendChild(document.createElement('div'));
 
     startObserving();
 
@@ -808,9 +807,9 @@ suite('Mutation Summary', function() {
   });
 
   test('Reorder And Remove From Tree', function() {
-    var div1 = testDiv.appendChild(document.createElement('div'));
-    var div2 = div1.appendChild(document.createElement('div'));
-    var div3 = div2.appendChild(document.createElement('div'));
+    const div1 = testDiv.appendChild(document.createElement('div'));
+    const div2 = div1.appendChild(document.createElement('div'));
+    const div3 = div2.appendChild(document.createElement('div'));
 
     startObserving();
 
@@ -825,8 +824,8 @@ suite('Mutation Summary', function() {
   });
 
   test('Reorder And Remove Subtree', function() {
-    var div1 = testDiv.appendChild(document.createElement('div'));
-    var div2 = div1.appendChild(document.createElement('div'));
+    const div1 = testDiv.appendChild(document.createElement('div'));
+    const div2 = div1.appendChild(document.createElement('div'));
 
     startObserving();
 
@@ -841,9 +840,9 @@ suite('Mutation Summary', function() {
   });
 
   test('Reorder Outside And Add To Tree', function() {
-    var div1 = document.createElement('div');
-    var div2 = div1.appendChild(document.createElement('div'));
-    var div3 = div2.appendChild(document.createElement('div'));
+    const div1 = document.createElement('div');
+    const div2 = div1.appendChild(document.createElement('div'));
+    const div3 = div2.appendChild(document.createElement('div'));
 
     startObserving();
 
@@ -858,8 +857,8 @@ suite('Mutation Summary', function() {
   });
 
   test('Reorder Outside And Add Subtree', function() {
-    var div1 = document.createElement('div');
-    var div2 = div1.appendChild(document.createElement('div'));
+    const div1 = document.createElement('div');
+    const div2 = div1.appendChild(document.createElement('div'));
 
     startObserving();
 
@@ -872,9 +871,9 @@ suite('Mutation Summary', function() {
   });
 
   test('Remove Subtree And Add To External', function() {
-    var div1 = testDiv.appendChild(document.createElement('div'));
-    var div2 = div1.appendChild(document.createElement('div'));
-    var div3 = document.createElement('div');
+    const div1 = testDiv.appendChild(document.createElement('div'));
+    const div2 = div1.appendChild(document.createElement('div'));
+    const div3 = document.createElement('div');
 
     startObserving();
     testDiv.removeChild(div1);
@@ -889,16 +888,16 @@ suite('Mutation Summary', function() {
   }
 
   test('Move', function() {
-    var divA = document.createElement('div');
+    const divA = document.createElement('div');
     testDiv.appendChild(divA);
     divA.id = 'a';
-    var divB = document.createElement('div');
+    const divB = document.createElement('div');
     testDiv.appendChild(divB);
     divB.id = 'b';
-    var divC = document.createElement('div');
+    const divC = document.createElement('div');
     testDiv.appendChild(divC);
     divC.id = 'c';
-    var divD = document.createElement('div')
+    const divD = document.createElement('div')
     testDiv.appendChild(divD);
     divD.id = 'd';
 
@@ -916,13 +915,13 @@ suite('Mutation Summary', function() {
   });
 
   test('Move2', function() {
-    var divA = document.createElement('div');
+    const divA = document.createElement('div');
     testDiv.appendChild(divA);
     divA.id = 'a';
-    var divB = document.createElement('div');
+    const divB = document.createElement('div');
     testDiv.appendChild(divB);
     divB.id = 'b';
-    var divC = document.createElement('div')
+    const divC = document.createElement('div')
     testDiv.appendChild(divC);
     divC.id = 'c';
 
@@ -939,25 +938,25 @@ suite('Mutation Summary', function() {
   });
 
   test('Move Detect Noop', function() {
-    var divA = document.createElement('div');
+    const divA = document.createElement('div');
     testDiv.appendChild(divA);
     divA.id = 'a';
-    var divB = document.createElement('div');
+    const divB = document.createElement('div');
     testDiv.appendChild(divB);
     divB.id = 'b';
-    var divC = document.createElement('div');
+    const divC = document.createElement('div');
     testDiv.appendChild(divC);
     divC.id = 'c';
-    var divD = document.createElement('div');
+    const divD = document.createElement('div');
     testDiv.appendChild(divD);
     divD.id = 'd';
-    var divE = document.createElement('div');
+    const divE = document.createElement('div');
     testDiv.appendChild(divE);
     divE.id = 'e';
-    var divF = document.createElement('div');
+    const divF = document.createElement('div');
     testDiv.appendChild(divF);
     divF.id = 'f';
-    var divG = document.createElement('div');
+    const divG = document.createElement('div');
     divG.id = 'g';
 
     startObserving();                 // A  B  C  D  E  F
@@ -982,10 +981,10 @@ suite('Mutation Summary', function() {
   });
 
   test('Move Detect Noop Simple', function() {
-    var divA = document.createElement('div');
+    const divA = document.createElement('div');
     testDiv.appendChild(divA);
     divA.id = 'a';
-    var divB = document.createElement('div');
+    const divB = document.createElement('div');
     testDiv.appendChild(divB);
     divB.id = 'b';
 
@@ -1003,14 +1002,14 @@ suite('Mutation Summary', function() {
   });
 
   test('Ignore Own Changes', function(async:()=>any) {
-    var div:Node;
-    var count = 0;
+    let div:Node;
+    let count = 0;
 
-    var summary1 = new MutationSummary.MutationSummary({
+    const summary1 = new MutationSummary.MutationSummary({
       observeOwnChanges: false,
       queries: [{ all: true}],
       callback: function(summaries) {
-        var summary = summaries[0];
+        const summary = summaries[0];
         count++;
 
         if (count == 1) {
@@ -1028,11 +1027,11 @@ suite('Mutation Summary', function() {
       }
     });
 
-    var summary2 = new MutationSummary.MutationSummary({
+    const summary2 = new MutationSummary.MutationSummary({
       observeOwnChanges: false,
       queries: [{ all: true}],
       callback: function(summaries) {
-        var summary = summaries[0];
+        const summary = summaries[0];
         count++;
 
         if (count == 1) {
@@ -1055,13 +1054,13 @@ suite('Mutation Summary', function() {
 
 
   test('Disconnect During Callback', function(async:()=>any) {
-    var div = document.createElement('div');
+    const div = document.createElement('div');
 
-    var callbackCount = 0;
-    var summary = new MutationSummary.MutationSummary({
+    let callbackCount = 0;
+    const summary = new MutationSummary.MutationSummary({
       queries: [{ all: true }],
       rootNode: div,
-      callback: function(summaries) {
+      callback: function(_) {
         callbackCount++;
         if (callbackCount > 1)
           return;
@@ -1084,7 +1083,7 @@ suite('Mutation Summary', function() {
 
 suite('TreeMirror Fuzzer', function() {
 
-  var testDiv:HTMLElement;
+  let testDiv:HTMLElement;
 
   setup(function() {
     testDiv = document.createElement('div');
@@ -1094,14 +1093,14 @@ suite('TreeMirror Fuzzer', function() {
   test('Fuzzer', function(async:()=>any) {
     this.timeout(15000);
 
-    var TREE_SIZE = 512;
-    var PASSES = 128;
-    var MOVES_PER_PASS = 128;
-    var NON_DOC_ROOTS_MAX = 4;
+    const TREE_SIZE = 512;
+    const PASSES = 128;
+    const MOVES_PER_PASS = 128;
+    const NON_DOC_ROOTS_MAX = 4;
 
 
-    var allNodes:Node[] = []
-    var nonRootNodes:Node[] = [];
+    const allNodes:Node[] = []
+    const nonRootNodes:Node[] = [];
 
     // Generate random document.
     randomTree(testDiv, TREE_SIZE);
@@ -1109,9 +1108,9 @@ suite('TreeMirror Fuzzer', function() {
     getReachable(testDiv, nonRootNodes, true);
 
     // Generate some fragments which lie outside the document.
-    var nonDocCount = randInt(1, NON_DOC_ROOTS_MAX);
-    for (var i = 0; i < nonDocCount; i++) {
-      var nonDoc = <HTMLElement>randomNode();
+    const nonDocCount = randInt(1, NON_DOC_ROOTS_MAX);
+    for (let i = 0; i < nonDocCount; i++) {
+      const nonDoc = <HTMLElement>randomNode();
       nonDoc.id = 'ext' + i;
       randomTree(nonDoc, randInt(Math.floor(TREE_SIZE / 8),
         Math.floor(TREE_SIZE / 4)));
@@ -1119,23 +1118,23 @@ suite('TreeMirror Fuzzer', function() {
       getReachable(nonDoc, nonRootNodes, true);
     }
 
-    var testingQueries:MutationSummary.IQuery[] = [{ characterData: true} ];
+    const testingQueries:MutationSummary.IQuery[] = [{ characterData: true} ];
 
-    var attributeQuery:MutationSummary.IQuery = { attribute: randomAttributeName() };
+    const attributeQuery:MutationSummary.IQuery = { attribute: randomAttributeName() };
     testingQueries.push(attributeQuery);
 
-    var elementQuery:MutationSummary.IQuery = {
+    const elementQuery:MutationSummary.IQuery = {
       element: randomTagname() + '[' + randomAttributeName() + ']',
       elementAttributes: randomAttributeName() + ' ' + randomAttributeName()
     };
     testingQueries.push(elementQuery);
 
-    var pass = 0;
-    var mirrorRoot = <HTMLElement> testDiv.cloneNode(false);
-    var mirrorClient = new TreeMirrorClient(testDiv, new TreeMirror(mirrorRoot), testingQueries);
+    let pass = 0;
+    const mirrorRoot = <HTMLElement> testDiv.cloneNode(false);
+    const mirrorClient = new TreeMirrorClient(testDiv, new TreeMirror(mirrorRoot), testingQueries);
 
     function doNextPass() {
-      for (var move = 0; move < MOVES_PER_PASS; move++) {
+      for (let move = 0; move < MOVES_PER_PASS; move++) {
         randomMutation(allNodes, nonRootNodes);
       }
 
@@ -1152,16 +1151,10 @@ suite('TreeMirror Fuzzer', function() {
         async();
       } else
         doNextPass();
-    };
+    }
 
     doNextPass();
   });
-
-  function testRandomCloneAndTestCopy() {
-    randomTree(testDiv, 512);
-    var copy = testDiv.cloneNode(true);
-    assertTreesEqual(<HTMLElement>testDiv, <HTMLElement>copy);
-  }
 
   function assertTreesEqual(node:HTMLElement, copy:HTMLElement) {
     assert.strictEqual(node.tagName, copy.tagName);
@@ -1170,8 +1163,8 @@ suite('TreeMirror Fuzzer', function() {
     assert.strictEqual(node.nodeType, copy.nodeType);
     if (node.nodeType == Node.ELEMENT_NODE) {
       assert.strictEqual(node.attributes.length, copy.attributes.length);
-      for (var i = 0; i < node.attributes.length; i++) {
-        var attr = node.attributes[i];
+      for (let i = 0; i < node.attributes.length; i++) {
+        const attr = node.attributes[i];
         assert.strictEqual(attr.value, (<Element>copy).getAttribute(attr.name));
       }
     } else {
@@ -1180,29 +1173,24 @@ suite('TreeMirror Fuzzer', function() {
 
     assert.strictEqual(node.childNodes.length, copy.childNodes.length);
 
-    var copyChild = copy.firstChild;
-    for (var child = node.firstChild; child; child = child.nextSibling) {
+    let copyChild = copy.firstChild;
+    for (let child = node.firstChild; child; child = child.nextSibling) {
       assertTreesEqual(<HTMLElement>child, <HTMLElement>copyChild);
       copyChild = copyChild.nextSibling;
     }
   }
 
-  // This is used because our implementation of Map is just a shim. If keys
-  // in our map have a magical __id__ property, then access becomes constant
-  // rather than linear.
-  var nodePrivateIdCounter = 2;
-
   function randomTree(root:Node, numNodes:number) {
-    var MAX_CHILDREN = 8;
+    const MAX_CHILDREN = 8;
 
     function randDist(count:number, amount:number) {
-      var buckets:number[] = [];
+      const buckets:number[] = [];
 
       while(count-- > 0)
         buckets[count] = 0;
 
       while (amount > 0) {
-        var add = randInt(0, 1);
+        const add = randInt(0, 1);
         buckets[randInt(0, buckets.length - 1)] += add;
         amount -= add;
       }
@@ -1213,18 +1201,18 @@ suite('TreeMirror Fuzzer', function() {
     if (numNodes <= 0)
       return;
 
-    var childCount = Math.min(numNodes, MAX_CHILDREN);
-    var childDist = randDist(childCount, numNodes - childCount);
-    for (var i = 0; i < childDist.length; i++) {
-      var maybeText = childDist[i] <= 1;
-      var child = root.appendChild(randomNode(maybeText));
+    const childCount = Math.min(numNodes, MAX_CHILDREN);
+    const childDist = randDist(childCount, numNodes - childCount);
+    for (let i = 0; i < childDist.length; i++) {
+      const maybeText = childDist[i] <= 1;
+      const child = root.appendChild(randomNode(maybeText));
       // child.id = root.id + '.' + String.fromCharCode(65 + i);  // asci('A') + i.
       if (child.nodeType == Node.ELEMENT_NODE)
         randomTree(child, childDist[i]);
     }
   }
 
-  var tagMenu = [
+  const tagMenu = [
     'DIV',
     'SPAN',
     'P'
@@ -1234,7 +1222,7 @@ suite('TreeMirror Fuzzer', function() {
     return tagMenu[randInt(0, tagMenu.length - 1)];
   }
 
-  var attributeMenu = [
+  const attributeMenu = [
     'foo',
     'bar',
     'baz',
@@ -1249,7 +1237,7 @@ suite('TreeMirror Fuzzer', function() {
     return attributeMenu[randInt(0, attributeMenu.length - 1)];
   }
 
-  var textMenu = [
+  const textMenu = [
     'Kermit',
     'Fozzy',
     'Gonzo',
@@ -1265,9 +1253,9 @@ suite('TreeMirror Fuzzer', function() {
   }
 
   function randomNode(maybeText?:boolean):Node {
-    var node:Node;
+    let node:Node;
     if (maybeText && !randInt(0, 8)) {
-      var text = randomText();
+      const text = randomText();
       if (randInt(0, 1))
         node = document.createTextNode(text);
       else
@@ -1288,7 +1276,7 @@ suite('TreeMirror Fuzzer', function() {
     if (!root.childNodes || ! root.childNodes.length)
       return;
 
-    for (var child = root.firstChild; child; child = child.nextSibling) {
+    for (let child = root.firstChild; child; child = child.nextSibling) {
       getReachable(child, reachable);
     }
 
@@ -1309,23 +1297,23 @@ suite('TreeMirror Fuzzer', function() {
     function selectNodeAtRandom(nodes:Node[],
                                 excludeNodeAndDescendants?:Node,
                                 isElement?:boolean):Node {
-      var node:Node;
+      let node:Node;
       while (!node || nodeIsDescendant(excludeNodeAndDescendants, node) || (isElement && node.nodeType != Node.ELEMENT_NODE))
         node = nodes[randInt(0, nodes.length - 1)];
       return node;
     }
 
     function moveNode(allNodes:Node[], node:Node) {
-      var parent = selectNodeAtRandom(allNodes, node, true);
+      const parent = selectNodeAtRandom(allNodes, node, true);
       // NOTE: The random index here maybe be childNodes[childNodes.length]
       // which is undefined, meaning 'insert at end of childlist'.
-      var beforeNode = parent.childNodes[randInt(0, parent.childNodes.length)];
+      const beforeNode = parent.childNodes[randInt(0, parent.childNodes.length)];
 
       parent.insertBefore(node, beforeNode);
     }
 
     function mutateAttribute(node:Element) {
-      var attrName = randomAttributeName();
+      const attrName = randomAttributeName();
       if (randInt(0, 1))
         node.setAttribute(attrName, String(randInt(0, 9)));
       else
@@ -1336,7 +1324,7 @@ suite('TreeMirror Fuzzer', function() {
       node.textContent = randomText();
     }
 
-    var node = selectNodeAtRandom(nonRootNodes);
+    const node = selectNodeAtRandom(nonRootNodes);
 
     if (randInt(0, 1)) {
       moveNode(allNodes, node);

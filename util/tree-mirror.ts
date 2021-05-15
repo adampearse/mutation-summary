@@ -42,7 +42,7 @@ interface TextData extends NodeData{
 
 class TreeMirror {
 
-  private idMap: MutationSummary.INumberMap<Node>;
+  private readonly idMap: MutationSummary.INumberMap<Node>;
 
   constructor(public root:Node, public delegate?:any) {
     this.idMap = {};
@@ -51,7 +51,7 @@ class TreeMirror {
   initialize(rootId:number, children:NodeData[]) {
     this.idMap[rootId] = this.root;
 
-    for (var i = 0; i < children.length; i++)
+    for (let i = 0; i < children.length; i++)
       this.deserializeNode(children[i], <Element>this.root);
   }
 
@@ -65,31 +65,31 @@ class TreeMirror {
     // based on random ordering of moves. The way we handle this is to first
     // remove all changed nodes from their parents, then apply.
     addedOrMoved.forEach((data:PositionData) => {
-      var node = this.deserializeNode(data);
-      var parent = this.deserializeNode(data.parentNode);
-      var previous = this.deserializeNode(data.previousSibling);
+      const node = this.deserializeNode(data);
+      this.deserializeNode(data.parentNode);
+      this.deserializeNode(data.previousSibling);
       if (node.parentNode)
         node.parentNode.removeChild(node);
     });
 
     removed.forEach((data:NodeData) => {
-      var node = this.deserializeNode(data);
+      const node = this.deserializeNode(data);
       if (node.parentNode)
         node.parentNode.removeChild(node);
     });
 
     addedOrMoved.forEach((data:PositionData) => {
-      var node = this.deserializeNode(data);
-      var parent = this.deserializeNode(data.parentNode);
-      var previous = this.deserializeNode(data.previousSibling);
+      const node = this.deserializeNode(data);
+      const parent = this.deserializeNode(data.parentNode);
+      const previous = this.deserializeNode(data.previousSibling);
       parent.insertBefore(node,
                           previous ? previous.nextSibling : parent.firstChild);
     });
 
     attributes.forEach((data:AttributeData) => {
-      var node = <Element> this.deserializeNode(data);
+      const node = <Element> this.deserializeNode(data);
       Object.keys(data.attributes).forEach((attrName) => {
-        var newVal = data.attributes[attrName];
+        const newVal = data.attributes[attrName];
         if (newVal === null) {
           node.removeAttribute(attrName);
         } else {
@@ -103,7 +103,7 @@ class TreeMirror {
     });
 
     text.forEach((data:TextData) => {
-      var node = this.deserializeNode(data);
+      const node = this.deserializeNode(data);
       node.textContent = data.textContent;
     });
 
@@ -116,11 +116,11 @@ class TreeMirror {
     if (nodeData === null)
       return null;
 
-    var node:Node = this.idMap[nodeData.id];
+    let node:Node = this.idMap[nodeData.id];
     if (node)
       return node;
 
-    var doc = this.root.ownerDocument;
+    let doc = this.root.ownerDocument;
     if (doc === null)
       doc = <HTMLDocument>this.root;
 
@@ -152,10 +152,9 @@ class TreeMirror {
         });
 
         break;
+      default:
+        throw "Unsupported node type: " + nodeData.nodeType;
     }
-
-    if (!node)
-      throw "ouch";
 
     this.idMap[nodeData.id] = node;
 
@@ -163,7 +162,7 @@ class TreeMirror {
       parent.appendChild(node);
 
     if (nodeData.childNodes) {
-      for (var i = 0; i < nodeData.childNodes.length; i++)
+      for (let i = 0; i < nodeData.childNodes.length; i++)
         this.deserializeNode(nodeData.childNodes[i], <Element>node);
     }
 
@@ -181,16 +180,14 @@ class TreeMirrorClient {
     this.nextId = 1;
     this.knownNodes = new MutationSummary.NodeMap<number>();
 
-    var rootId = this.serializeNode(target).id;
-    var children:NodeData[] = [];
-    for (var child = target.firstChild; child; child = child.nextSibling)
+    const rootId = this.serializeNode(target).id;
+    const children:NodeData[] = [];
+    for (let child = target.firstChild; child; child = child.nextSibling)
       children.push(this.serializeNode(child, true));
 
     this.mirror.initialize(rootId, children);
 
-    var self = this;
-
-    var queries = [{ all: true }] as MutationSummary.IQuery[];
+    let queries = [{ all: true }] as MutationSummary.IQuery[];
 
     if (testingQueries)
       queries = queries.concat(testingQueries);
@@ -213,7 +210,7 @@ class TreeMirrorClient {
   }
 
   private rememberNode(node:Node):number {
-    var id = this.nextId++;
+    const id = this.nextId++;
     this.knownNodes.set(node, id);
     return id;
   }
@@ -226,19 +223,19 @@ class TreeMirrorClient {
     if (node === null)
       return null;
 
-    var id = this.knownNodes.get(node);
+    const id = this.knownNodes.get(node);
     if (id !== undefined) {
       return { id: id };
     }
 
-    var data:NodeData = {
+    const data:NodeData = {
       nodeType: node.nodeType,
       id: this.rememberNode(node)
     };
 
     switch(data.nodeType) {
       case Node.DOCUMENT_TYPE_NODE:
-        var docType = <DocumentType>node;
+        const docType = <DocumentType>node;
         data.name = docType.name;
         data.publicId = docType.publicId;
         data.systemId = docType.systemId;
@@ -250,18 +247,18 @@ class TreeMirrorClient {
         break;
 
       case Node.ELEMENT_NODE:
-        var elm = <Element>node;
+        const elm = <Element>node;
         data.tagName = elm.tagName;
         data.attributes = {};
-        for (var i = 0; i < elm.attributes.length; i++) {
-          var attr = elm.attributes[i];
+        for (let i = 0; i < elm.attributes.length; i++) {
+          const attr = elm.attributes[i];
           data.attributes[attr.name] = attr.value;
         }
 
         if (recursive && elm.childNodes.length) {
           data.childNodes = [];
 
-          for (var child = elm.firstChild; child; child = child.nextSibling)
+          for (let child = elm.firstChild; child; child = child.nextSibling)
             data.childNodes.push(this.serializeNode(child, true));
         }
         break;
@@ -273,13 +270,13 @@ class TreeMirrorClient {
   private serializeAddedAndMoved(added:Node[],
                                  reparented:Node[],
                                  reordered:Node[]):PositionData[] {
-    var all = added.concat(reparented).concat(reordered);
+    const all = added.concat(reparented).concat(reordered);
 
-    var parentMap = new MutationSummary.NodeMap<MutationSummary.NodeMap<boolean>>();
+    const parentMap = new MutationSummary.NodeMap<MutationSummary.NodeMap<boolean>>();
 
     all.forEach((node) => {
-      var parent = node.parentNode;
-      var children = parentMap.get(parent)
+      const parent = node.parentNode;
+      let children = parentMap.get(parent)
       if (!children) {
         children = new MutationSummary.NodeMap<boolean>();
         parentMap.set(parent, children);
@@ -288,19 +285,19 @@ class TreeMirrorClient {
       children.set(node, true);
     });
 
-    var moved:PositionData[] = [];
+    const moved:PositionData[] = [];
 
     parentMap.keys().forEach((parent) => {
-      var children = parentMap.get(parent);
+      const children = parentMap.get(parent);
 
-      var keys = children.keys();
+      let keys = children.keys();
       while (keys.length) {
-        var node = keys[0];
+        let node = keys[0];
         while (node.previousSibling && children.has(node.previousSibling))
           node = node.previousSibling;
 
         while (node && children.has(node)) {
-          var data = <PositionData>this.serializeNode(node);
+          const data = <PositionData>this.serializeNode(node);
           data.previousSibling = this.serializeNode(node.previousSibling);
           data.parentNode = this.serializeNode(node.parentNode);
           moved.push(<PositionData>data);
@@ -308,7 +305,7 @@ class TreeMirrorClient {
           node = node.nextSibling;
         }
 
-        var keys = children.keys();
+        keys = children.keys();
       }
     });
 
@@ -316,11 +313,11 @@ class TreeMirrorClient {
   }
 
   private serializeAttributeChanges(attributeChanged:MutationSummary.IStringMap<Element[]>):AttributeData[] {
-    var map = new MutationSummary.NodeMap<AttributeData>();
+    const map = new MutationSummary.NodeMap<AttributeData>();
 
     Object.keys(attributeChanged).forEach((attrName) => {
       attributeChanged[attrName].forEach((element) => {
-        var record = map.get(element);
+        let record = map.get(element);
         if (!record) {
           record = <AttributeData>this.serializeNode(element);
           record.attributes = {};
@@ -337,22 +334,22 @@ class TreeMirrorClient {
   }
 
   applyChanged(summaries:MutationSummary.Summary[]) {
-    var summary:MutationSummary.Summary = summaries[0]
+    const summary:MutationSummary.Summary = summaries[0]
 
-    var removed:NodeData[] = summary.removed.map((node:Node) => {
+    const removed:NodeData[] = summary.removed.map((node:Node) => {
       return this.serializeNode(node);
     });
 
-    var moved:PositionData[] =
+    const moved:PositionData[] =
         this.serializeAddedAndMoved(summary.added,
                                     summary.reparented,
                                     summary.reordered);
 
-    var attributes:AttributeData[] =
+    const attributes:AttributeData[] =
         this.serializeAttributeChanges(summary.attributeChanged);
 
-    var text:TextData[] = summary.characterDataChanged.map((node:Node) => {
-      var data = this.serializeNode(node);
+    const text:TextData[] = summary.characterDataChanged.map((node:Node) => {
+      const data = this.serializeNode(node);
       data.textContent = node.textContent;
       return <TextData>data;
     });
