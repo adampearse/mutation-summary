@@ -17,7 +17,7 @@ limitations under the License.
 -->
 <head>
 <title>Shuffle Comparison</title>
-<script src="../../src/mutation-summary.js"></script>
+<script src="../../dist/umd/mutation-summary.js"></script>
 <body>
   Shuffle moves: <input id="moveCount" type="number" value="1000">
 
@@ -120,7 +120,7 @@ function setupWatch() {
       }
       break;
     case 'summary':
-      observerSummary = new MutationSummary({ callback: handleSummary, queries: [{ all: true }]});
+      observerSummary = new MutationSummary.MutationSummary({ callback: handleSummary, queries: [{ all: true }]});
       window.report = function() {
         document.getElementById('report').textContent = changeCount + ' reorders reported in ' + callbacks + ' callbacks';
       }
