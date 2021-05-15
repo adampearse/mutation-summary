@@ -1,5 +1,9 @@
-# What is this? #
+| Branch      | Status |
+| ----------- | ----------- |
+| Master      | ![](https://github.com/mmacfadden/mutation-summary/actions/workflows/main.yml/badge.svg?branch=master)       |
+| Develop     | ![](https://github.com/mmacfadden/mutation-summary/actions/workflows/main.yml/badge.svg?branch=develop)        |
 
+# What is this? #
 Mutation Summary is a JavaScript library that makes observing changes to the DOM fast, easy and safe.
 
 It's built on top of (and requires) a new browser API called [DOM Mutation Observers](http://dom.spec.whatwg.org/#mutation-observers).
@@ -63,3 +67,9 @@ Mutation Observers is the work of the [W3C WebApps working group](http://www.w3.
 # Google groups discussion list #
 
  * [mutation-summary-discuss@googlegroups.com](https://groups.google.com/group/mutation-summary-discuss)
+
+# Credits
+Initial implementation contributed by:
+
+Rafael Weinstein
+https://github.com/rafaelw
