@@ -15,7 +15,7 @@ const input = 'src/index.ts';
 const plugins = [
   resolve(),
   commonjs(),
-  typescript()
+  typescript({tsconfig: "tsconfig.rollup.json"})
 ];
 
 const moduleName = "MutationSummary";

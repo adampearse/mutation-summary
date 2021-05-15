@@ -8,17 +8,7 @@ const validNameNonInitialChar = /[a-zA-Z0-9_\-]+/;
 
 export class Selector {
   private static nextUid: number = 1;
-  private static matchesSelector: string = (function () {
-    const element = document.createElement('div');
-    if (typeof element['webkitMatchesSelector'] === 'function')
-      return 'webkitMatchesSelector';
-    if (typeof element['mozMatchesSelector'] === 'function')
-      return 'mozMatchesSelector';
-    if (typeof element['msMatchesSelector'] === 'function')
-      return 'msMatchesSelector';
-
-    return 'matchesSelector';
-  })();
+  private static matchesSelector: string = "matches";
 
   public tagName: string;
   public qualifiers: Qualifier[];

@@ -32,6 +32,7 @@
     "build:types": "tsc --declaration true --emitDeclarationOnly true --outDir dist/types && node ./scripts/enhance-types.js",
     "build:umd": "rollup -c rollup.config.js",
     "test:compile": "npm run build:types && tsc --module none tests/test.ts util/tree-mirror.ts",
+    "test:run": "TS_NODE_PROJECT='./tsconfig.testing.json' mocha",
     "dist": "npm run build:esm && npm run build:commonjs && npm run build:umd && npm run build:types",
     "clean": "rimraf dist",
     "prepack": "npm run dist"
@@ -47,11 +48,17 @@
     "@rollup/plugin-commonjs": "19.0.0",
     "@rollup/plugin-node-resolve": "13.0.0",
     "@rollup/plugin-typescript": "8.2.1",
+    "@types/chai": "^4.2.18",
+    "@types/jsdom": "^16.2.10",
+    "@types/mocha": "latest",
     "chai": "^4.3.4",
+    "global-jsdom": "^8.1.0",
+    "jsdom": "^16.5.3",
     "mocha": "^8.4.0",
     "rimraf": "^3.0.2",
     "rollup": "2.47.0",
     "rollup-plugin-terser": "7.0.2",
+    "ts-node": "9.1.1",
     "tslib": "^2.2.0",
     "typescript": "^4.2.4"
   }
