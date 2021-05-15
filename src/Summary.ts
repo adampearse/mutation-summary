@@ -118,7 +118,7 @@ export class Summary {
    * @param name The name off the attribute on the element to get the old value
    * for.
    */
-  getOldAttribute(element: Element, name: string): string {
+  getOldAttribute(element: Node, name: string): string {
     return this.projection.getOldAttribute(element, name);
   }
 
