@@ -26,7 +26,7 @@ MutationSummary.createQueryValidator = function(root, query) {
     }
 
     function allData(node) {
-      var oldPreviousSiblingMap = new MutationSummary.NodeMap;
+      var oldPreviousSiblingMap = new NodeMap;
 
       for (var child = node.firstChild; child; child = child.nextSibling)
         oldPreviousSiblingMap.set(child, child.previousSibling);
@@ -174,7 +174,7 @@ MutationSummary.createQueryValidator = function(root, query) {
 function Validator(root, includeFunc, dataFunc, validateFunc) {
 
   function collectNodeMap(node, includeFunc, dataFunc, map) {
-    map = map || new MutationSummary.NodeMap;
+    map = map || new NodeMap;
     if (includeFunc(node))
       map.set(node, dataFunc(node));
 
@@ -195,7 +195,7 @@ function Validator(root, includeFunc, dataFunc, validateFunc) {
     var old = this.current;
     this.current = collectNodeMap(root, includeFunc, dataFunc);
 
-    var currentCopy = new MutationSummary.NodeMap;
+    var currentCopy = new NodeMap;
     this.current.keys().forEach(function(node) {
       currentCopy.set(node, this.current.get(node));
     }, this);

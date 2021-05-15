@@ -22,269 +22,269 @@ function assertSelectorNames(selectors, expectSelectorStrings) {
 suite('Setup', function() {
   test('Selector Parsing', function() {
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div'),
+      Selector.parseSelectors('div'),
       ['div']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter(' div '),
+      Selector.parseSelectors(' div '),
       ['div']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div,span'),
+      Selector.parseSelectors('div,span'),
       ['div', 'span']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter(' div , SPAN '),
+      Selector.parseSelectors(' div , SPAN '),
       ['div', 'SPAN']
     );
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div span');
+      Selector.parseSelectors('div span');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div > span');
+      Selector.parseSelectors('div > span');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div>span');
+      Selector.parseSelectors('div>span');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div < span');
+      Selector.parseSelectors('div < span');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div<span');
+      Selector.parseSelectors('div<span');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div:first-child')
+      Selector.parseSelectors('div:first-child')
     });
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('#id'),
+      Selector.parseSelectors('#id'),
       ['*#id']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('span#id'),
+      Selector.parseSelectors('span#id'),
       ['span#id']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('SPAN#id1#id2'),
+      Selector.parseSelectors('SPAN#id1#id2'),
       ['SPAN#id1#id2']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('span, #id'),
+      Selector.parseSelectors('span, #id'),
       ['span', '*#id']
     );
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('#2foo');
+      Selector.parseSelectors('#2foo');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('# div');
+      Selector.parseSelectors('# div');
     });
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('.className'),
+      Selector.parseSelectors('.className'),
       ['*.className']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('.className.className2'),
+      Selector.parseSelectors('.className.className2'),
       ['*.className.className2']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div.className'),
+      Selector.parseSelectors('div.className'),
       ['div.className']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('DIV.className.className2'),
+      Selector.parseSelectors('DIV.className.className2'),
       ['DIV.className.className2']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter(' div.className '),
+      Selector.parseSelectors(' div.className '),
       ['div.className']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('.className'),
+      Selector.parseSelectors('.className'),
       ['*.className']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter(' .className '),
+      Selector.parseSelectors(' .className '),
       ['*.className']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('.className,.className,span.className'),
+      Selector.parseSelectors('.className,.className,span.className'),
       ['*.className', '*.className', 'span.className']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter(' .className, .className, SPAN.className'),
+      Selector.parseSelectors(' .className, .className, SPAN.className'),
       ['*.className', '*.className', 'SPAN.className']
     );
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div. className');
+      Selector.parseSelectors('div. className');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div . className');
+      Selector.parseSelectors('div . className');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div .className');
+      Selector.parseSelectors('div .className');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div .className');
+      Selector.parseSelectors('div .className');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('.2className');
+      Selector.parseSelectors('.2className');
     });
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div[foo].className'),
+      Selector.parseSelectors('div[foo].className'),
       ['div[foo].className']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('DIV[foo].className#id'),
+      Selector.parseSelectors('DIV[foo].className#id'),
       ['DIV[foo].className#id']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div#id.className[foo]'),
+      Selector.parseSelectors('div#id.className[foo]'),
       ['div#id.className[foo]']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div[foo]'),
+      Selector.parseSelectors('div[foo]'),
       ['div[foo]']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div[ foo ]'),
+      Selector.parseSelectors('div[ foo ]'),
       ['div[foo]']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter(' div[ foo ] '),
+      Selector.parseSelectors(' div[ foo ] '),
       ['div[foo]']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div[foo],span[bar]'),
+      Selector.parseSelectors('div[foo],span[bar]'),
       ['div[foo]', 'span[bar]']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter(' div[foo] , span[bar] '),
+      Selector.parseSelectors(' div[foo] , span[bar] '),
       ['div[foo]', 'span[bar]']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('[foo]'),
+      Selector.parseSelectors('[foo]'),
       ['*[foo]']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('[foo][bar]'),
+      Selector.parseSelectors('[foo][bar]'),
       ['*[foo][bar]']
     );
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div [foo]');
+      Selector.parseSelectors('div [foo]');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div[foo');
+      Selector.parseSelectors('div[foo');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('divfoo]');
+      Selector.parseSelectors('divfoo]');
     });
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div[foo=bar]'),
+      Selector.parseSelectors('div[foo=bar]'),
       ['div[foo="bar"]']);
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div[ foo=" bar baz " ]'),
+      Selector.parseSelectors('div[ foo=" bar baz " ]'),
       ['div[foo=" bar baz "]']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter(' div[ foo = \' bar baz \'] '),
+      Selector.parseSelectors(' div[ foo = \' bar baz \'] '),
       ['div[foo=" bar baz "]']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div[foo=baz],span[bar="bat"]'),
+      Selector.parseSelectors('div[foo=baz],span[bar="bat"]'),
       ['div[foo="baz"]', 'span[bar="bat"]']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter(' div[foo=boo] , span[bar="baz"] '),
+      Selector.parseSelectors(' div[foo=boo] , span[bar="baz"] '),
       ['div[foo="boo"]', 'span[bar="baz"]']
     );
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div[foo="bar ]');
+      Selector.parseSelectors('div[foo="bar ]');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div[foo=bar"baz]');
+      Selector.parseSelectors('div[foo=bar"baz]');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div[foo=bar baz]');
+      Selector.parseSelectors('div[foo=bar baz]');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div[foo|=bar]');
+      Selector.parseSelectors('div[foo|=bar]');
     });
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div[foo~=bar]'),
+      Selector.parseSelectors('div[foo~=bar]'),
       ['div[foo~="bar"]']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div[foo~="bar  "]'),
+      Selector.parseSelectors('div[foo~="bar  "]'),
       ['div[foo~="bar  "]']
     );
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div[foo~=]');
+      Selector.parseSelectors('div[foo~=]');
     });
 
     assert.throws(function() {
-      MutationSummary.parseElementFilter('div[foo~ =bar]');
+      Selector.parseSelectors('div[foo~ =bar]');
     });
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div[foo][bar]'),
+      Selector.parseSelectors('div[foo][bar]'),
       ['div[foo][bar]']
     );
 
     assertSelectorNames(
-      MutationSummary.parseElementFilter('div[foo], A, *[bar], div[ baz = "bat"]'),
+      Selector.parseSelectors('div[foo], A, *[bar], div[ baz = "bat"]'),
       ['div[foo]', 'A', '*[bar]', 'div[baz="bat"]']
     );
   });

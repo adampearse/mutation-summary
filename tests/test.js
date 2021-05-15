@@ -3,7 +3,7 @@
 ///<reference path='../util/tree-mirror.ts'/>
 function compareNodeArrayIgnoreOrder(expected, actual) {
     assert.strictEqual(expected.length, actual.length);
-    var map = new MutationSummary.NodeMap();
+    var map = new NodeMap();
     expected.forEach(function (node) {
         map.set(node, true);
     });

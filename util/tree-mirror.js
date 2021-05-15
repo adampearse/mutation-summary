@@ -111,7 +111,7 @@ var TreeMirrorClient = (function () {
         this.target = target;
         this.mirror = mirror;
         this.nextId = 1;
-        this.knownNodes = new MutationSummary.NodeMap();
+        this.knownNodes = new NodeMap();
         var rootId = this.serializeNode(target).id;
         var children = [];
         for (var child = target.firstChild; child; child = child.nextSibling)
@@ -185,12 +185,12 @@ var TreeMirrorClient = (function () {
     TreeMirrorClient.prototype.serializeAddedAndMoved = function (added, reparented, reordered) {
         var _this = this;
         var all = added.concat(reparented).concat(reordered);
-        var parentMap = new MutationSummary.NodeMap();
+        var parentMap = new NodeMap();
         all.forEach(function (node) {
             var parent = node.parentNode;
             var children = parentMap.get(parent);
             if (!children) {
-                children = new MutationSummary.NodeMap();
+                children = new NodeMap();
                 parentMap.set(parent, children);
             }
             children.set(node, true);
@@ -218,7 +218,7 @@ var TreeMirrorClient = (function () {
     };
     TreeMirrorClient.prototype.serializeAttributeChanges = function (attributeChanged) {
         var _this = this;
-        var map = new MutationSummary.NodeMap();
+        var map = new NodeMap();
         Object.keys(attributeChanged).forEach(function (attrName) {
             attributeChanged[attrName].forEach(function (element) {
                 var record = map.get(element);

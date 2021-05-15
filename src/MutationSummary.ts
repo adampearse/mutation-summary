@@ -63,10 +63,8 @@ function elementFilterAttributes(selectors: Selector[]): string[] {
 
 export class MutationSummary {
 
-  public static NodeMap = NodeMap; // exposed for use in TreeMirror.
-  public static parseElementFilter = Selector.parseSelectors; // exposed for testing.
-
   public static createQueryValidator: (root: Node, query: IQuery) => any;
+
   private connected: boolean;
   private options: IMutationSummaryOptions;
   private observer: MutationObserver;
