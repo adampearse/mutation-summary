@@ -22,26 +22,43 @@ export class Summary {
   /**
    * All nodes that were moved from one parent to another.
    */
-  public reparented: Node[];
+  public reparented: Node[] | undefined;
 
   /**
    * All nodes that are still in the subtree and still have their same
    * parent, but that have been reordered within the child list of their
    * parent.
    */
-  public reordered: Node[];
+  public reordered: Node[] | undefined;
 
   /**
    * All elements previously and presently in the subtree and previously and
    * presently having the given attribute, for whom the value of the given
    * attribute change.
    */
-  public valueChanged: Node[];
+  public valueChanged: Node[] | undefined;
 
-  public attributeChanged: IStringMap<Element[]>;
+  /**
+   * An object reporting attribute value changes. The object contains one key
+   * for each attribute name contained in `elementAttributes`. The value of
+   * each key is an array of elements previously & presently in the subtree and
+   * previously & presently matching at least one pattern for whom the
+   * corresponding attribute changed value.
+   */
+  public attributeChanged: IStringMap<Element[]> | undefined;
 
-  public characterDataChanged: Node[];
+  /**
+   * All characterData nodes previously & presently whose value changed.
+   */
+  public characterDataChanged: Node[] | undefined;
 
+  /**
+   * Creates a new Summary instance given a [[MutationProjection]] and the
+   * [[IQuery]] that was responsible for this summary being generated.
+   *
+   * @param projection The projection containing the changes.
+   * @param query The query that cause the summary to be created.
+   */
   constructor(private projection: MutationProjection, query: IQuery) {
     this.added = [];
     this.removed = [];
@@ -76,6 +93,7 @@ export class Summary {
         this.characterDataChanged = characterDataChanged;
     }
 
+    // TODO this seems unnecessary.
     if (this.reordered)
       this.getOldPreviousSibling = projection.getOldPreviousSibling.bind(projection);
   }
@@ -104,10 +122,23 @@ export class Summary {
     return this.projection.getOldAttribute(element, name);
   }
 
+  /**
+   * Retrieves the previous text of `node`. `node` must be  contained in the
+   * `valueChanged` node array, otherwise the function throws an error.
+   *
+   * @param node The node to get the old character data for.
+   */
   getOldCharacterData(node: Node): string {
     return this.projection.getOldCharacterData(node);
   }
 
+  /**
+   * Retrieves the previous previousSibling for a node. The node must be
+   * contained in the reordered element array, otherwise the function throws
+   * an error.
+   *
+   * @param node The node to get the previous sibling for.
+   */
   getOldPreviousSibling(node: Node): Node {
     return this.projection.getOldPreviousSibling(node);
   }

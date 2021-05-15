@@ -1,7 +1,3 @@
-function escapeQuotes(value: string): string {
-  return '"' + value.replace(/"/, '\\\"') + '"';
-}
-
 export class Qualifier {
   public attrName: string;
   public attrValue: string;
@@ -45,4 +41,8 @@ export class Qualifier {
     //@ts-ignore
     return '[' + this.attrName + ']';
   }
+}
+
+function escapeQuotes(value: string): string {
+  return '"' + value.replace(/"/, '\\\"') + '"';
 }

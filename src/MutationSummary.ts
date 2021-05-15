@@ -14,14 +14,15 @@ import {MutationSummaryOptionProcessor} from "./MutationSummaryOptionProcessor";
  *
  * @example
  * ```
+ *
  * const ms = new MutationSummary({
- *   callback(summaries => {
- *     summaries.forEach(summary => console.log(summary)),
- *     queries: [
- *       { all: true }
- *     ]
- *   })
- * })
+ * callback(summaries: Summary[]) {
+ *    summaries.forEach((summary: Summary) => console.log(summary));
+ *  },
+ *  queries: [
+ *    { all: true }
+ *  ]
+ * });
  * ```
  */
 export class MutationSummary {
