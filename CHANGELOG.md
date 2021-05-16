@@ -2,12 +2,12 @@
 This page outlines the changes made with each Mutation Summary release.
 
 # Releases
-* [1.0.0 (May 16, 2021)](#100-may-16-2021)
-* [0.2.0 (May 15, 2021)](#020-may-15-2021)
+* [1.0.0 (May 15, 2021)](#100-may-15-2021)
+* [0.2.0 (May 14, 2021)](#020-may-14-2021)
 * [0.1.1 (May 2017)](#011-2017)
 
 
-## 1.0.0 (May 16, 2021)
+## 1.0.0 (May 15, 2021)
 [1.0.0 Release Milestone](https://github.com/mmacfadden/mutation-summary/milestone/2?closed=1)
 
 ### Enhancements
@@ -19,7 +19,7 @@ This page outlines the changes made with each Mutation Summary release.
 * **Typedoc API ([#10](https://github.com/mmacfadden/mutation-summary/issues/10))**: Added tsdoc / typedoc api.
 
 
-## 0.2.0 (May 15, 2021)
+## 0.2.0 (May 14, 2021)
 [0.2.0 Release Milestone](https://github.com/mmacfadden/mutation-summary/milestone/1?closed=1)
 
 ### Enhancements
