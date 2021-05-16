@@ -11,7 +11,7 @@
   "scripts": {
     "build": "tsc",
     "clean": "rimraf dist",
-    "prepublishOnly": "npm run build"
+    "prepack": "npm run build"
   },
   "repository": {
     "type": "git",
