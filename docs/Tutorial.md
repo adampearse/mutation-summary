@@ -4,7 +4,7 @@ This document is a tutorial that describes how to use the Mutation Summary libra
 
 Other resources:
   * A [high-level overview](https://github.com/mmacfadden/mutation-summary) of what this library is, how it can help you, and the new [DOM Mutation Observers](http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#mutation-observers) browser API on which it depends.
-  * The MutationSummary [API reference](docs/APIReference.md) document.
+  * The MutationSummary [API reference](https://mmacfadden.github.io/mutation-summary/) document.
 
 # Observing a single attribute #
 
@@ -165,5 +165,5 @@ If your page uses multiple libraries that do different things (say a UI widget l
 
 # Learning More #
 
-  * Refer to the [API Reference](docs/APIReference.md) document -- in particular to learn about the two other types of queries: [characterData](docs/APIReference.md#the-characterdata-query) and [all](docs/APIReference.md#the-all-query).
+  * Refer to the [API Docs](https://mmacfadden.github.io/mutation-summary/)  -- in particular to learn about the two other types of queries: [characterData](https://mmacfadden.github.io/mutation-summary/#character-data-query) and [all](https://mmacfadden.github.io/mutation-summary/#all-query).
   * Examine the [PageMirror](examples/pagemirror_extension) extension which shows how to use the all query and the included TreeMirror utility class to fully mirror the contents of a document.
