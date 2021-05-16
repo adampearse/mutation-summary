@@ -17,6 +17,9 @@
     "type": "git",
     "url": "https://github.com/mmacfadden/mutation-summary.git"
   },
+  "bugs": {
+    "url": "https://github.com/mmacfadden/mutation-summary/issues"
+  },
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
