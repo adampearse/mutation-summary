@@ -11,14 +11,14 @@
   "scripts": {
     "build": "tsc",
     "clean": "rimraf dist",
-    "prepublish": "npm run build"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
-    "url": "https://code.google.com/p/mutation-summary/"
+    "url": "https://github.com/mmacfadden/mutation-summary.git"
   },
   "author": "",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "devDependencies": {
     "chai": "^4.3.4",
     "mocha": "^8.4.0",
