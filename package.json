@@ -35,7 +35,7 @@
     "build:api": "typedoc",
     "dist": "npm run build:esm && npm run build:commonjs && npm run build:umd && npm run build:types && npm run build:api",
     "clean": "rimraf dist",
-    "prepack": "npm run dist"
+    "prepare": "npm run dist"
   },
   "repository": {
     "type": "git",
