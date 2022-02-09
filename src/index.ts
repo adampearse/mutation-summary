@@ -14,7 +14,7 @@
 // @ts-ignore
 // @ts-ignore
 
-if (MutationObserver === undefined) {
+if (typeof window !== 'undefined' && typeof MutationObserver === 'undefined') {
   console.error('DOM Mutation Observers are required.');
   console.error('https://developer.mozilla.org/en-US/docs/DOM/MutationObserver');
   throw Error('DOM Mutation Observers are required');
@@ -34,5 +34,5 @@ export * from "./NodeMap";
 export * from "./Qualifier";
 export * from "./Selector";
 export * from "./Summary";
-export * from "./TreeChanges";
 export * from "./tree-mirror";
+export * from "./TreeChanges";
